@@ -3,10 +3,11 @@
 /*----------------------------------------------------------------------------*/
 /*  macros which define physics of problem and grid (user modified) */
 
+		/* Dimensionality: ONE_D, TWO_D or THREE_D */
+#define DIM  	@DIM@
+#define @XXX_D@
 #define ADIABATIC
 #define MHD
-/* Dimensionality: ONE_D, TWO_D or THREE_D */
-#define ONE_D
 #define NX1 1210
 #define NX2 1
 #define NX3 1
