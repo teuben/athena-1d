@@ -90,7 +90,7 @@ static void write_dx_header(const struct grid_block *agrid){
   fprintf(pfile,"# with the positions (\"dep\" on positions).\n\n");
 
   /* Initialize the byte offset to skip over the first 4 floats */
-  offset = 4*sizeof(float);
+  offset = 2*sizeof(int) + 2*sizeof(float);
 
   for(n=0;n<NUM_ARRAY;n++){
     offset += nzones*sizeof(float);
