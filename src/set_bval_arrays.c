@@ -256,7 +256,7 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	bval->bxiib2[i][j] = agrid->bx[i][jj];
 	bval->byiib2[i][j] = agrid->by[i][jj];
 #endif /* MHD */
-	bval->uiib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
+	bval->uiib2[i][j][2] = agrid->u[i][jj][2]*reflect_s;
       }
     }
   }
@@ -305,7 +305,7 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	bval->bxoib2[i][j] = agrid->bx[i][jj];
 	bval->byoib2[i][j] = agrid->by[i][jj+1];
 #endif /* MHD */
-	bval->uoib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
+	bval->uoib2[i][j][2] = agrid->u[i][jj][2]*reflect_s;
       }
     }
   }
