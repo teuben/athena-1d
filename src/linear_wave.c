@@ -20,7 +20,7 @@ char buf[120];
 int i=0;
 int is,ie,n,m;
 Real d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
-Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
+Real x[NX1],ev[NWAVE],rem[NWAVE][NWAVE],lem[NWAVE][NWAVE];
 /*============================================================================*/
 
 /* Read initial conditions */
@@ -41,11 +41,12 @@ Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
    bx0 = 1.0;
    by0 = 1.0;
    bz0 = sqrt(1.25);
-   for (n=0; n<NVAR; n++) {
-   for (m=0; m<NVAR; m++) {
-      rem[n][m] = 0.0;
-      lem[n][m] = 0.0;
-   }}
+   for (n=0; n<NWAVE; n++) {
+     for (m=0; m<NWAVE; m++) {
+       rem[n][m] = 0.0;
+       lem[n][m] = 0.0;
+     }
+   }
 
 /* Get eigenmatrix */
 
@@ -80,6 +81,7 @@ Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
       agrid->u[i][2] = d0*v0 + amp*cos(2.0*PI*x[i])*rem[2][wave_flag];
       agrid->u[i][3] = d0*w0 + amp*cos(2.0*PI*x[i])*rem[3][wave_flag];
       agrid->bx[i] = bx0;
+      agrid->u[i][NVAR-3] = bx0;
       agrid->u[i][NVAR-2] = by0 + amp*cos(2.0*PI*x[i])*rem[NVAR-2][wave_flag];
       agrid->u[i][NVAR-1] = bz0 + amp*cos(2.0*PI*x[i])*rem[NVAR-1][wave_flag];
 #ifdef ADIABATIC
@@ -88,7 +90,6 @@ Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
         + 0.5*d0*(u0*u0 + v0*v0 + w0*w0)+amp*cos(2.0*PI*x[i])*rem[4][wave_flag];
 #endif
    }
-   agrid->bx[ie+1] = bx0;
 }
 
 
@@ -101,7 +102,7 @@ void linear_wave_error(struct grid_block *agrid)
   int i=0;
   int is,ie,n,m;
   Real d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
-  Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],error[NVAR];
+  Real x[NX1],ev[NWAVE],rem[NWAVE][NWAVE],lem[NWAVE][NWAVE],error[NWAVE];
 /*============================================================================*/
 
   printf("amp=%e, u0=%e, flag=%i\n",amp,u0,wave_flag);
@@ -112,11 +113,12 @@ void linear_wave_error(struct grid_block *agrid)
    bx0 = 1.0;
    by0 = 1.0;
    bz0 = sqrt(1.25);
-   for (n=0; n<NVAR; n++) {
-   for (m=0; m<NVAR; m++) {
-      rem[n][m] = 0.0;
-      lem[n][m] = 0.0;
-   }}
+   for (n=0; n<NWAVE; n++) {
+     for (m=0; m<NWAVE; m++) {
+       rem[n][m] = 0.0;
+       lem[n][m] = 0.0;
+     }
+   }
 
 /* Get eigenmatrix */
 
@@ -136,15 +138,15 @@ void linear_wave_error(struct grid_block *agrid)
    is = agrid->is; ie = agrid->ie;
    x[is] = 0.5*(1.0/(double)(ie-is+1));
    for (i=is+1; i<=ie; i++) {x[i] = x[i-1] + 1.0/(double)(ie-is+1);}
-   for (n=0; n<NVAR; n++) {error[n] = 0.0;}
+   for (n=0; n<NWAVE; n++) {error[n] = 0.0;}
    for (i=is; i<=ie; i++) {
      error[0]+=fabs(agrid->u[i][0]-d0-amp*cos(2.0*PI*x[i])*rem[0][wave_flag]);
      error[1]+=fabs(agrid->u[i][1]-d0*u0-amp*cos(2.0*PI*x[i])*rem[1][wave_flag]);
      error[2]+=fabs(agrid->u[i][2]-d0*v0-amp*cos(2.0*PI*x[i])*rem[2][wave_flag]);
      error[3]+=fabs(agrid->u[i][3]-d0*w0-amp*cos(2.0*PI*x[i])*rem[3][wave_flag]);
-     error[NVAR-2] += fabs(agrid->u[i][NVAR-2]
+     error[NWAVE-2] += fabs(agrid->u[i][NVAR-2]
 		     - by0 - amp*cos(2.0*PI*x[i])*rem[NVAR-2][wave_flag]);
-     error[NVAR-1] += fabs(agrid->u[i][NVAR-1]
+     error[NWAVE-1] += fabs(agrid->u[i][NVAR-1]
 		     -bz0 - amp*cos(2.0*PI*x[i])*rem[NVAR-1][wave_flag]);
 #ifdef ADIABATIC
      error[4] += fabs(agrid->u[i][4] - p0/GAMM1 
@@ -152,10 +154,10 @@ void linear_wave_error(struct grid_block *agrid)
        - 0.5*d0*(u0*u0 + v0*v0 + w0*w0)-amp*cos(2.0*PI*x[i])*rem[4][wave_flag]);
 #endif
    }
-   for (n=0; n<NVAR; n++) {error[n] = error[n]/(double)(ie-is+1);}
+   for (n=0; n<NWAVE; n++) {error[n] = error[n]/(double)(ie-is+1);}
    printf("errors\n");
    printf("%i ",ie-is+1);
-   for (n=0; n<NVAR; n++) {printf("%e ",error[n]);}
+   for (n=0; n<NWAVE; n++) {printf("%e ",error[n]);}
    printf("\n");
-   for (n=0; n<NVAR; n++) {printf("rem[%i] = %e\n",n,rem[n][wave_flag]);}
+   for (n=0; n<NWAVE; n++) {printf("rem[%i] = %e\n",n,rem[n][wave_flag]);}
 }
