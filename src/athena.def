@@ -1,3 +1,5 @@
+#ifndef ATHENA_DEFINES_H
+#define ATHENA_DEFINES_H 
 /*----------------------------------------------------------------------------*/
 /*  macros which define physics of problem and grid (user modified) */
 
@@ -19,7 +21,8 @@
 /*----------------------------------------------------------------------------*/
 /* general purpose macros (never modified) */
 
-#define REAL double 
+typedef double REAL;
+
 #define MIN(a,b) ( ((a) < (b)) ? (a) : (b) )
 #define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
 #define SIGN(a) ( ((a) < 0.) ? -1. : 1. )
@@ -38,19 +41,21 @@
 /* computed macros based on above choices (never modified) */
 
 #if defined(ISOTHERMAL) AND defined(HYDRO)
- #define NVAR   4
+ enum {NVAR = 4};
 #endif
 #if defined(ISOTHERMAL) AND defined(MHD)
- #define NVAR   6
+ enum {NVAR = 6};
 #endif
 #if defined(ADIABATIC) AND defined(HYDRO)
- #define NVAR   5
+ enum {NVAR = 5};
 #endif
 #if defined(ADIABATIC) AND defined(MHD)
- #define NVAR   7
+ enum {NVAR = 7};
 #endif
 
 #define GAMM1 (GAMMA - 1.0)
 #define GAMM2 (GAMMA - 2.0)
 #define ISOTHERMAL_C_SQ (ISOTHERMAL_C)*(ISOTHERMAL_C)
 #define NXMAX NX1
+
+#endif /* ATHENA_DEFINES_H */

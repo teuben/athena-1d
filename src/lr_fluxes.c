@@ -1,4 +1,4 @@
-/*============================================================================*/
+/*============================================================================*
  *                            Function LR_FLUXES
  * Computes fluxes of CONSERVED variables from left- and right-states
  *
@@ -18,10 +18,11 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void lr_fluxes(REAL ul[NVAR], REAL ur[NVAR], REAL wl[NVAR], REAL wr[NVAR],
    REAL b1, REAL pbl, REAL pbr, REAL fl[NVAR], REAL fr[NVAR])
 {
-#include "prototypes.h"
    
    fl[0] = ul[1];
    fr[0] = ur[1];

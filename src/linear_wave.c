@@ -6,14 +6,16 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 REAL u0,amp;
 int wave_flag;
+
 void linear_wave(FILE *p_input_file, struct grid_block *agrid)
 {
 /* Problem generator for 1-D fast magnetosonic waves                          */
 /*                                                                            */
 /*============================================================================*/
-#include "prototypes.h"
 char buf[120];
 int i=0;
 int is,ie,n,m;
@@ -88,20 +90,21 @@ REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
    }
    agrid->bx[ie+1] = bx0;
 }
+
+
 REAL linear_wave_error(struct grid_block *agrid)
 {
 /* Computes L1-error in linear waves, ASSUMING WAVE HAS PROPAGATED AN INTEGER 
  * NUMBER OF PERIODS
  *
  *============================================================================*/
-#include "prototypes.h"
-int i=0;
-int is,ie,n,m;
-REAL d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
-REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],error[NVAR];
+  int i=0;
+  int is,ie,n,m;
+  REAL d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
+  REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],error[NVAR];
 /*============================================================================*/
 
-printf("amp=%e, u0=%e, flag=%i\n",amp,u0,wave_flag);
+  printf("amp=%e, u0=%e, flag=%i\n",amp,u0,wave_flag);
    d0 = 1.0;
    p0 = 1.0/GAMMA;
    v0 = 0.0;

@@ -6,16 +6,17 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void shkset(FILE *p_input_file, struct grid_block *agrid)
 {
 /* Problem generator for 1-D Riemann problems                                 */
 /*                                                                            */
 /*============================================================================*/
-#include "prototypes.h"
-char buf[120];
-int i=0;
-int is,ie;
-REAL dl,pl,ul,vl,wl,bxl,byl,bzl,dr,pr,ur,vr,wr,bxr,byr,bzr;
+  char buf[120];
+  int i=0;
+  int is,ie;
+  REAL dl,pl,ul,vl,wl,bxl,byl,bzl,dr,pr,ur,vr,wr,bxr,byr,bzr;
 /*============================================================================*/
 
 /* Read left state from 'athinput' */

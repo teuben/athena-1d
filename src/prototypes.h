@@ -1,3 +1,6 @@
+#ifndef PROTOTYPES_H
+#define PROTOTYPES_H 
+
 void add1_2name(char file[9]);
 
 void binary_dump(struct grid_block *agrid);
@@ -56,3 +59,5 @@ REAL roe_fluxes(REAL wl[NXMAX][NVAR], REAL wr[NXMAX][NVAR],
 void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval);
 
 void set_ghost_zones(struct grid_block *agrid, struct bval_array *bval);
+
+#endif /* PROTOTYPES_H */

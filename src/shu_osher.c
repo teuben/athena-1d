@@ -6,15 +6,16 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void shu_osher(FILE *p_input_file, struct grid_block *agrid)
 {
 /* Problem generator for 1-D Riemann problems                                 */
 /*                                                                            */
 /*============================================================================*/
-#include "prototypes.h"
-int i=0;
-int is,ie;
-REAL dl,pl,ul,vl,wl,x[NX1];
+  int i=0;
+  int is,ie;
+  REAL dl,pl,ul,vl,wl,x[NX1];
 /*============================================================================*/
 
    is = agrid->is; ie = agrid->ie;

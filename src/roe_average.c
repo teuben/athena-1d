@@ -1,4 +1,4 @@
-/*============================================================================*/
+/*============================================================================*
  *                            Function ROE_AVERAGE
  * Computes Roe averages of left- and right-states
  *
@@ -18,12 +18,14 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
-void roe_average(REAL wl[NVAR], REAL wr[NVAR], REAL b1, REAL droe,
-   REAL v1roe, REAL v2roe, REAL v3roe, REAL hroe, REAL b2roe, REAL b3roe
-   REAL x, REAL y, REAL pbl, REAL pbr, REAL el, REAL er)
-{
 #include "prototypes.h"
-REAL sqrtdl,sqrtdr,sdlpdr;
+
+void roe_average(REAL wl[NVAR], REAL wr[NVAR], REAL b1, REAL droe,
+		 REAL v1roe, REAL v2roe, REAL v3roe, REAL hroe, REAL b2roe, REAL b3roe,
+		 REAL x, REAL y, REAL pbl, REAL pbr, REAL el, REAL er)
+{
+  REAL sqrtdl,sqrtdr,sdlpdr;
+
    sqrtdl = sqrt(wl[0]);
    sqrtdr = sqrt(wr[0]);
    sdlpdr = sqrtdl + sqrtdr;
@@ -38,8 +40,8 @@ REAL sqrtdl,sqrtdr,sdlpdr;
  * factors X and Y are needed to compute the eigenvectors (eqs. B15,B16)
  */
 #ifdef MHD
-   pbl = 0.5*(wl[NVAR-2]*wl[NVAR-2] + wl[NVAR-1]*wl[NVAR-1] + b1*b1)
-   pbr = 0.5*(wr[NVAR-2]*wr[NVAR-2] + wr[NVAR-1]*wr[NVAR-1] + b1*b1)
+   pbl = 0.5*(wl[NVAR-2]*wl[NVAR-2] + wl[NVAR-1]*wl[NVAR-1] + b1*b1);
+   pbr = 0.5*(wr[NVAR-2]*wr[NVAR-2] + wr[NVAR-1]*wr[NVAR-1] + b1*b1);
    b2roe = (sqrtdr*wl[NVAR-2] + sqrtdl*wr[NVAR-2])/sdlpdr;
    b3roe = (sqrtdr*wl[NVAR-1] + sqrtdl*wr[NVAR-1])/sdlpdr;
    x = 0.5*((b2roe*b2roe - wl[NVAR-2]*wr[NVAR-2])

@@ -90,10 +90,10 @@ void Eigensystem4_adiabatic_hydro_InConsVars(REAL v1, REAL v2, REAL v3, REAL h,
    REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL vsq,asq,a,na,qa;
-   vsq = v1*v1 + v2*v2 + v3*v3;
-   asq = GAMM1*MAX((h-0.5*vsq), TINY_NUMBER);
-   a = sqrt(asq);
+  REAL vsq,asq,a,na,qa;
+  vsq = v1*v1 + v2*v2 + v3*v3;
+  asq = GAMM1*MAX((h-0.5*vsq), TINY_NUMBER);
+  a = sqrt(asq);
 
 /* Compute eigenvalues (eq. B2) */
 
@@ -180,12 +180,12 @@ void Eigensystem4_isothermal_mhd_InConsVars(REAL d, REAL v1, REAL v2, REAL v3,
    REAL b1, REAL b2, REAL b3, REAL x, REAL y, REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL btsq,bt_starsq,vaxsq,twid_csq,q_starsq,cfsq,cf,cssq,cs;
-REAL bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,alpha_f,alpha_s;
-REAL sqrtd,s,twid_c,qf,qs,af_prime,as_prime,vax;
-REAL norm,cff,css,af,as,afpb,aspb,q2_star,q3_star,vqstr;
-   btsq = b2*b2 + b3*b3;
-   bt_starsq = btsq*y;
+  REAL btsq,bt_starsq,vaxsq,twid_csq,q_starsq,cfsq,cf,cssq,cs;
+  REAL bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,alpha_f,alpha_s;
+  REAL sqrtd,s,twid_c,qf,qs,af_prime,as_prime,vax;
+  REAL norm,cff,css,af,as,afpb,aspb,q2_star,q3_star,vqstr;
+  btsq = b2*b2 + b3*b3;
+  bt_starsq = btsq*y;
 
 /* Compute fast- and slow-magnetosonic speeds (eq. B42 and B43) */
 
@@ -369,13 +369,13 @@ void Eigensystem4_adiabatic_mhd_InConsVars(REAL d, REAL v1, REAL v2, REAL v3,
    REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL vsq,btsq,bt_starsq,vaxsq,hp,twid_asq,q_starsq,cfsq,cf,cssq,cs;
-REAL bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,vbet,alpha_f,alpha_s;
-REAL sqrtd,s,twid_a,qf,qs,af_prime,as_prime,afpbb,aspbb,vax;
-REAL norm,cff,css,af,as,afpb,aspb,q2_star,q3_star,vqstr;
-   vsq = v1*v1 + v2*v2 + v3*v3;
-   btsq = b2*b2 + b3*b3;
-   bt_starsq = (GAMM1 - GAMM2*y)*btsq;
+  REAL vsq,btsq,bt_starsq,vaxsq,hp,twid_asq,q_starsq,cfsq,cf,cssq,cs;
+  REAL bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,vbet,alpha_f,alpha_s;
+  REAL sqrtd,s,twid_a,qf,qs,af_prime,as_prime,afpbb,aspbb,vax;
+  REAL norm,cff,css,af,as,afpb,aspb,q2_star,q3_star,vqstr;
+  vsq = v1*v1 + v2*v2 + v3*v3;
+  btsq = b2*b2 + b3*b3;
+  bt_starsq = (GAMM1 - GAMM2*y)*btsq;
 
 /* Compute fast- and slow-magnetosonic speeds (eqs. B18-20) */
 

@@ -9,13 +9,14 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+
 void advect(FILE *p_input_file, struct grid_block *agrid)
 {
-char buf[120];
-int i=0,j=0,k=0,idirect;
-int is,ie,js,je,ks,ke;
-REAL x[NX1],y[NX2],z[NX3];
-REAL radx,rady,radz,rad2,amp,da,ua,va,wa,bxa,bya,bza;
+  char buf[120];
+  int i=0,j=0,k=0,idirect;
+  int is,ie,js,je,ks,ke;
+  REAL x[NX1],y[NX2],z[NX3];
+  REAL radx,rady,radz,rad2,amp,da,ua,va,wa,bxa,bya,bza;
 /*============================================================================*/
 /* Read idirect from 'athinput' */
 

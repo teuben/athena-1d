@@ -90,9 +90,9 @@ void Eigensystem4_adiabatic_hydro_InPrimVars(REAL d, REAL v1, REAL v2, REAL v3,
    REAL p, REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL asq,a;
-   asq = GAMMA*p/d;
-   a = sqrt(asq);
+  REAL asq,a;
+  asq = GAMMA*p/d;
+  a = sqrt(asq);
 
 /* Compute eigenvalues (eq. A2) */
 
@@ -176,9 +176,9 @@ void Eigensystem4_isothermal_mhd_InPrimVars(REAL d, REAL v1, REAL v2, REAL v3,
    REAL b1, REAL b2, REAL b3, REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL btsq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
-REAL sqrtd,s,qf,qs,af,as,vax,nf,ns,af_prime,as_prime;
-   btsq  = b2*b2 + b3*b3;
+  REAL btsq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
+  REAL sqrtd,s,qf,qs,af,as,vax,nf,ns,af_prime,as_prime;
+  btsq  = b2*b2 + b3*b3;
 
 /* Compute fast- and slow-magnetosonic speeds (eq. A8 and A9) */
 
@@ -343,9 +343,9 @@ void Eigensystem4_adiabatic_mhd_InPrimVars(REAL d, REAL v1, REAL v2, REAL v3,
    REAL p, REAL b1, REAL b2, REAL b3, REAL eigenvalues[NVAR],
    REAL right_eigenmatrix[NVAR][NVAR], REAL left_eigenmatrix[NVAR][NVAR])
 {
-REAL btsq,asq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
-REAL sqrtd,s,a,qf,qs,af,as,vax,na,af_prime,as_prime;
-   btsq  = b2*b2 + b3*b3;
+  REAL btsq,asq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
+  REAL sqrtd,s,a,qf,qs,af,as,vax,na,af_prime,as_prime;
+  btsq  = b2*b2 + b3*b3;
 
 /* Compute fast- and slow-magnetosonic speeds (eq. A8 and A9) */
 

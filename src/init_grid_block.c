@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+void PROBLEM (FILE *p_input_file, struct grid_block *agrid);
+
 void init_grid_block(FILE *p_input_file, FILE *p_output_file,
    struct grid_block *agrid)
 {
@@ -13,13 +16,11 @@ void init_grid_block(FILE *p_input_file, FILE *p_output_file,
 /* init_grid, PROBLEM, and init_dt                                            */
 /*                                                                            */
 /*============================================================================*/
-#include "prototypes.h"
-void PROBLEM (FILE *p_input_file, struct grid_block *agrid);
-int i=0,nxzones;
-REAL xmin,xmax;
-REAL diib,sxiib,syiib,sziib,eiib,bxiib,byiib,bziib;
-REAL doib,sxoib,syoib,szoib,eoib,bxoib,byoib,bzoib;
-char buf[120];
+  int i=0,nxzones;
+  REAL xmin,xmax;
+  REAL diib,sxiib,syiib,sziib,eiib,bxiib,byiib,bziib;
+  REAL doib,sxoib,syoib,szoib,eoib,bxoib,byoib,bzoib;
+  char buf[120];
 /*============================================================================*/
 /* Initialize grid */
 /* Read lines 9-17 from 'athinput' */

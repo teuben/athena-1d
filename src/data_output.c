@@ -6,25 +6,26 @@
 #include <stdio.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void data_output(struct grid_block *agrid, int hst_flag, int hdf_flag,
   int bin_flag)
 {
-#include "prototypes.h"
 
-/* History Dump */
+  /* History Dump */
 
-   if (agrid->time >= (agrid->t_hst + agrid->dt_hst)) {
-      agrid->t_hst = agrid->t_hst + agrid->dt_hst;
-      hst_flag = 1;
-   }
-   if (hst_flag == 1) printd(agrid);
+  if (agrid->time >= (agrid->t_hst + agrid->dt_hst)) {
+    agrid->t_hst = agrid->t_hst + agrid->dt_hst;
+    hst_flag = 1;
+  }
+  if (hst_flag == 1) printd(agrid);
 
-/* Unformatted (binary) Dump */
+  /* Unformatted (binary) Dump */
 
-   if (agrid->time >= (agrid->t_bin + agrid->dt_bin)) {
-      agrid->t_bin = agrid->t_bin + agrid->dt_bin;
-      bin_flag = 1;
-   }
-   if (bin_flag == 1) binary_dump(agrid);
+  if (agrid->time >= (agrid->t_bin + agrid->dt_bin)) {
+    agrid->t_bin = agrid->t_bin + agrid->dt_bin;
+    bin_flag = 1;
+  }
+  if (bin_flag == 1) binary_dump(agrid);
 
 }

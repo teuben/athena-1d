@@ -16,14 +16,15 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void integrate_1step(struct grid_block *agrid)
 {
-#include "prototypes.h"
-int i=0,n,is,ie;
-REAL dtodx;
-REAL maxev_lr,maxev_roe,maxev_xswp=0.0,min_dtx=1.0e37;
-REAL u[NXMAX][NVAR],wl[NXMAX][NVAR],wr[NXMAX][NVAR],f_u[NXMAX][NVAR];
-REAL b_par[NXMAX+1];
+  int i=0,n,is,ie;
+  REAL dtodx;
+  REAL maxev_lr,maxev_roe,maxev_xswp=0.0,min_dtx=1.0e37;
+  REAL u[NXMAX][NVAR],wl[NXMAX][NVAR],wr[NXMAX][NVAR],f_u[NXMAX][NVAR];
+  REAL b_par[NXMAX+1];
 
    is = agrid->is;
    ie = agrid->ie;

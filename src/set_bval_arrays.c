@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include "athena.def"
 #include "athena.h"
+
 void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 {
-int i=0,n,ii,is,ie;
-REAL reflect_s;
-   is = agrid->is; ie = agrid->ie;
+  int i=0,n,ii,is,ie;
+  REAL reflect_s;
+
+  is = agrid->is; ie = agrid->ie;
 
 /*------------------------ Start with Inner I boundary -----------------------*/
 

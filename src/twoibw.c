@@ -6,15 +6,15 @@
 #include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
+#include "prototypes.h"
+
 void twoibw(FILE *p_input_file, struct grid_block *agrid)
 {
 /* Problem generator for two interacting blast waves (from WC)                */
 /*                                                                            */
 /*============================================================================*/
-#include "prototypes.h"
-char buf[120];
-int i=0;
-int is,ie;
+  int i=0;
+  int is,ie;
 /*============================================================================*/
 /* Read idirect from 'athinput' */
 
