@@ -23,12 +23,12 @@
 /*----------------------------- ISOTHERMAL HYDRO -------------------------------
  *
  * Input: v1,v2,v3 = components of velocity
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_isothermal_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
-   Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
 /* Compute eigenvalues (eq. A5) */
 
@@ -88,12 +88,12 @@ void Eigensystem4_isothermal_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
 /*---------------------------- ADIABATIC HYDRO ---------------------------------
  *
  * Input: d,v1,v2,v3,p = primitive variables
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_adiabatic_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
-   Real p, Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real p, Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real asq,a;
   asq = GAMMA*p/d;
@@ -177,12 +177,12 @@ void Eigensystem4_adiabatic_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
 /*----------------------------- ISOTHERMAL MHD ---------------------------------
  *
  * Input: d,v1,v2,v3,b1,b2,b3 = density, velocities, and B field
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_isothermal_mhd_InPrimVars(Real d, Real v1, Real v2, Real v3,
-   Real b1, Real b2, Real b3, Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real b1, Real b2, Real b3, Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real btsq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
   Real sqrtd,s,qf,qs,af,as,vax,nf,ns,af_prime,as_prime;
@@ -347,12 +347,12 @@ void Eigensystem4_isothermal_mhd_InPrimVars(Real d, Real v1, Real v2, Real v3,
 /*-------------------------------- ADIABATIC MHD -------------------------------
  *
  * Input: d,v1,v2,v3,p,b1,b2,b3 = density, velocities, pressure, and B field
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_adiabatic_mhd_InPrimVars(Real d, Real v1, Real v2, Real v3,
-   Real p, Real b1, Real b2, Real b3, Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real p, Real b1, Real b2, Real b3, Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real btsq,asq,vaxsq,q_starsq,cfsq,cf,cssq,cs,bt,bet2,bet3,alpha_f,alpha_s;
   Real sqrtd,s,a,qf,qs,af,as,vax,na,af_prime,as_prime;
