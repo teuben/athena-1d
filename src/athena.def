@@ -1,0 +1,56 @@
+/*----------------------------------------------------------------------------*/
+/*  macros which define physics of problem and grid (user modified) */
+
+#define ADIABATIC
+#define MHD
+#define NX1 1210
+#define NX2 1
+#define NX3 1
+#define GAMMA 1.66666667
+#define ISOTHERMAL_C 1.0
+#define PROBLEM linear_wave
+
+/*----------------------------------------------------------------------------*/
+/* macros associated with numerical algorithm (rarely modified) */
+
+#define SECOND_ORDER
+#define COURNO 0.8
+
+/*----------------------------------------------------------------------------*/
+/* general purpose macros (never modified) */
+
+#define REAL double 
+#define MIN(a,b) ( ((a) < (b)) ? (a) : (b) )
+#define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
+#define SIGN(a) ( ((a) < 0.) ? -1. : 1. )
+#define SQR(x) ( (x)*(x) )
+#define STR(x) #x
+#define AND &&
+#define OR ||
+#define SQRT2 1.4142135623730951
+#define ONE_OVER_SQRT2 0.7071067811865475
+#define PI 3.1415927
+#define TWO_3RDS 0.6666666666666667
+#define TINY_NUMBER 1.0e-20
+#define HUGE_NUMBER 1.0e+20
+
+/*----------------------------------------------------------------------------*/
+/* computed macros based on above choices (never modified) */
+
+#if defined(ISOTHERMAL) AND defined(HYDRO)
+ #define NVAR   4
+#endif
+#if defined(ISOTHERMAL) AND defined(MHD)
+ #define NVAR   6
+#endif
+#if defined(ADIABATIC) AND defined(HYDRO)
+ #define NVAR   5
+#endif
+#if defined(ADIABATIC) AND defined(MHD)
+ #define NVAR   7
+#endif
+
+#define GAMM1 (GAMMA - 1.0)
+#define GAMM2 (GAMMA - 2.0)
+#define ISOTHERMAL_C_SQ (ISOTHERMAL_C)*(ISOTHERMAL_C)
+#define NXMAX NX1
