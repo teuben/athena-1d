@@ -150,4 +150,6 @@ int main(void)
   set_ghost_zones(&grid_level0, &bval_level0); 
   data_output(&grid_level0, 1, 1, 1);
   fclose(p_output_file);
+
+  return EXIT_SUCCESS;
 }
