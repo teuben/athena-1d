@@ -1,6 +1,8 @@
 #    @WARNING@
 #=======================================================================
 include Makefile_@DIM@
+include Makefile_@GAS@
+include Makefile_@EOS@
 #===
 #  generic Makefile(.in)
 #
