@@ -7,26 +7,31 @@ include Makefile_@EOS@
 #  generic Makefile(.in)
 #
 #-------------------  object files  ------------------------------------
-OBJ =   add1_2name.o   \
-	binary_dump.o \
-	binary_dump_2d.o \
+CORE_OBJ =   add1_2name.o \
 	data_output.o \
 	eigensystems_InConsVars.o \
 	eigensystems_InPrimVars.o \
 	init_dt.o \
-	init_grid_block.o \
-	init_grid_block_2d.o \
 	integrate_1step.o \
 	lr_states.o \
 	main.o \
 	printd.o \
 	roe_fluxes.o \
 	set_bval_arrays.o \
-	set_ghost_zones.o \
+	set_ghost_zones.o 
+#-----------------------------------------------------------------------
+OBJ_1 = binary_dump.o \
+	init_grid_block.o \
 	shkset.o \
 	twoibw.o \
-	shu_osher.o \
-	linear_wave.o
+	shu_osher.o 
+#-----------------------------------------------------------------------
+OBJ_2 = binary_dump_2d.o \
+	init_grid_block_2d.o
+#-----------------------------------------------------------------------
+OBJ_MHD_1 = linear_wave.o
+#-----------------------------------------------------------------------
+OBJ = $(CORE_OBJ) $(OBJ_@DIM@) $(OBJ_@GAS@_@DIM@) 
 #-------------------  macro definitions  -------------------------------
 EXEDIR = ../bin/
 #
