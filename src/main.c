@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
   if (argc > 1) {
     printf("Warning: Options not processed in %s yet\n",argv[0]);
     printf("Inputfile needs to be called \"athinput\", output will be \"athoutput\"\n");
-    
+    /* should we process arguments like   -i <input>  -o <output>      */
+    /* or use the NEMO/MIRIAD/... style    in=<input>  out=<output> ?? */
   }
 /*============================================================================*/
 
