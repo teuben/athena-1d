@@ -1,0 +1,130 @@
+From teuben@astro.umd.edu  Wed Jan  3 09:47:03 2001
+Received: from earth.astro.umd.edu (earth.astro.umd.edu [129.2.14.2]) by ophir.astro.umd.edu (950413.SGI.8.6.12/950213.SGI.AUTOCF) via ESMTP id JAA12826 for <jstone@ophir.astro.umd.edu>; Wed, 3 Jan 2001 09:47:03 -0500
+Received: from apus.astro.umd.edu (teuben@apus.astro.umd.edu [129.2.14.11])
+	by earth.astro.umd.edu (8.9.1a/8.9.1/WLS8.9) with ESMTP id JAA00228
+	for <jstone@mailhost.astro.umd.edu>; Wed, 3 Jan 2001 09:53:23 -0500 (EST)
+Received: from localhost (teuben@localhost)
+	by apus.astro.umd.edu (8.9.3+Sun/8.9.1/WLS8.9s) with ESMTP id JAA22829
+	for <jstone@astro.umd.edu>; Wed, 3 Jan 2001 09:53:23 -0500 (EST)
+Date: Wed, 3 Jan 2001 09:53:23 -0500 (EST)
+From: Peter Teuben <teuben@astro.umd.edu>
+To: Jim Stone <jstone@astro.umd.edu>
+Subject: makefile
+Message-ID: <Pine.GSO.4.10.10101030953030.22735-100000@apus.astro.umd.edu>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Status: RO
+
+
+# Generated automatically from Makefile.in by configure.
+# Makefile for partiview - please do not edit if the file is named "Makefile",
+# since configure would overwrite it on the next configure. Edit "Makefile.in"
+# instead, and run configure instead!!!
+# If you must change configure.in, run autoconf, and then configure etc.
+
+# the following variables are under AC control
+# KIRA_INC, KIRA_LIB
+# FLTK_INC, FLTK_LIB
+# PV_FLAGS
+
+SHELL = /bin/sh
+
+# TARGET
+TARGET   = partiview
+
+#	Override with --with-fltk=
+FLTK_INC   = -I/usr/local/include
+FLTK_LIB   = -L/usr/local/lib -lfltk
+
+#KIRA_INC = -I$(STARLAB_PATH)/inc
+#KIRA_LIB = -L${STARLAB_PATH)/lib
+
+#  AC variables KIRA_INC and KIRA_LIB automatically created
+#  if $STARLAB_PATH present; override with --with-kira=
+KIRA_INC = -I/home/teuben/cvs/starlab/inc
+KIRA_LIB = -L/home/teuben/cvs/starlab/lib -ltdyn -ldyn -lnode -lstd
+
+#GL_LIB   = -L/usr/local/lib/Mesa -lGL -lGLU
+GL_LIB   = -lGLU -lGL
+X_LIB    =  -L/usr/X11R6/lib  -lSM -lICE -lXext -lX11 
+M_LIB    = -lm
+
+# FLAGS and BINARIES
+PV_FLAGS    =  -DUSE_KIRA
+DEFS	    = -DNOCAVE -Dunix $(PV_FLAGS) ## -DUSE_KIRA ## -DUSE_IEEEIO
+INCL	    = ${FLTK_INC} -I/usr/X11R6/include $(KIRA_INC)
+CC          = gcc
+CFLAGS      = ${OPT} ${DEFS} ${INCL}
+CXX	    = c++
+CXXFLAGS    = ${CFLAGS} 
+## OTYPE    = -n32 -mips3
+#OPT        = -g3 -Ofast ${OTYPE}
+OPT         = -g -O2 ${OTYPE}
+LINK        = ${CXX}
+LIBS        = ${KIRA_LIB} ${FLTK_LIB} ${GL_LIB} ${X_LIB} ${M_LIB}
+
+APP_CSRCS   = geometry.c partibrains.c mgtexture.c textures.c findfile.c sfont.c
+APP_CXXSRCS = partiview.cc partiviewc.cc partipanel.cc Gview.cc Hist.cc \
+		Fl_Log_Slider.cxx kira_parti.cc # parti-ieee.cc
+
+APP_OBJS    = partiview.o partiviewc.o partipanel.o Gview.o Hist.o \
+		geometry.o partibrains.o \
+		mgtexture.o textures.o futil.o findfile.o sfont.o \
+		sclock.o notify.o Fl_Log_Slider.o \
+		kira_parti.o \
+		${MORE}
+
+all:	depended $(TARGET)
+
+depended:
+	${MAKE} depend
+	touch depended
+	@echo "Re-running 'make'"
+	${MAKE}
+
+help:
+	@echo  Partiview
+	@echo  
+
+clean:
+	rm -f *.o core Makedepend $(TARGET)
+	touch Makedepend
+
+cleanall: clean
+	rm -f Makefile config.log config.status config.h config.cache
+
+$(TARGET):  $(APP_OBJS)
+	$(CXX) -o $@ $(OPT)  $(APP_OBJS) $(LIBS)
+
+ptest:  ptest.o
+	$(CXX) -o $@ $(OPT) ptest.o $(LIBS)
+
+dometest:  dometest.o geometry.o
+	$(CXX) -o $@ $(OPT) dometest.o geometry.o $(LIBS)
+
+
+.PHONEY: depend
+
+# dep: depend
+# depend:	_always
+
+depend:
+	rm -f Makedepend
+	${CC} -M ${CFLAGS} ${APP_CSRCS} > Makedepend
+	${CXX} -M ${CXXFLAGS} ${APP_CXXSRCS} >> Makedepend
+
+_always:
+
+.SUFFIXES: .C .cc .cxx .cpp
+
+.C.o:
+	${CXX} -c $< ${CXXFLAGS} 
+.cc.o:
+	${CXX} -c $< ${CXXFLAGS} 
+.cxx.o:
+	${CXX} -c $< ${CXXFLAGS}
+.cpp.o:
+	${CXX} -c $< ${CXXFLAGS} 
+
+include Makedepend
+
