@@ -6,6 +6,10 @@
 #include "athena.def"
 #include "athena.h"
 
+
+#if defined ONE_D
+
+
 void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 {
   int i=0,n,ii,is,ie;
@@ -43,9 +47,6 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 		agrid->niib);
 	ii = is; /* Choose outflow as default */
       }
-      /* if (agrid->niib == 1) {ii = is+(3-i);}
-	 if (agrid->niib == 2) {ii = is;}
-	 if (agrid->niib == 4) {ii = ie-(3-i);} */
       for (n=0;  n<NVAR;  n++) {
 	bval->uiib[i][n] = agrid->u[ii][n];
       }
@@ -85,9 +86,6 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 		agrid->noib);
 	ii = ie; /* Choose outflow as default */
       }
-      /* if (agrid->noib == 1) {ii = ie-i;}
-	 if (agrid->noib == 2) {ii = ie;}
-	 if (agrid->noib == 4) {ii = is+i;} */
       for (n=0;  n<NVAR;  n++) {
 	bval->uoib[i][n] = agrid->u[ii][n];
       }
@@ -96,3 +94,201 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
     }
   }
 }
+
+
+#elif defined TWO_D
+
+
+void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
+  int i,j,n,ii,jj;
+  int is1,is2,ie1,ie2;
+  Real reflect_s;
+
+  is1 = agrid->is1;  ie1 = agrid->ie1;
+  is2 = agrid->is2;  ie2 = agrid->ie2;
+
+/*------------------------ Start with Inner 1 boundary -----------------------*/
+
+  if (agrid->niib1 == 1) {reflect_s = -1.0;} else {reflect_s = 1.0;}
+
+/* Do niib1=3 (inflow) */
+
+  if (agrid->niib1 == 3) {
+    for (i=0; i<4; i++) {
+      for (j=is2-4; j<=ie2+4; j++){
+	for (n=0; n<NVAR; n++) {
+	  bval->uiib1[i][j][n] = agrid->boundary_values.uiib1[i][j][n];
+	}
+	bval->bxiib1[i][j] = agrid->boundary_values.bxiib1[i][j];
+	bval->byiib1[i][j] = agrid->boundary_values.byiib1[i][j];
+      }
+    }
+
+/* Do niib1=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
+
+  } else {
+    for (i=0; i<4; i++) {
+      switch(agrid->niib1){
+      case 1:
+	ii = is1+(3-i);  break;
+      case 2:
+	ii = is1;  break;
+      case 4:
+	ii = ie1-(3-i);  break;
+      default:
+	fprintf(stderr,"[set_bval_arrays]: agrid->niib1 = %d unknown\n",
+		agrid->niib1);
+	ii = is1; /* Choose outflow as default */
+      }
+      for (j=is2-4; j<=ie2+4; j++){
+	for (n=0; n<NVAR; n++) {
+	  bval->uiib1[i][j][n] = agrid->u[ii][j][n];
+	}
+	bval->bxiib1[i][j] = agrid->bx[ii][j];
+	bval->byiib1[i][j] = agrid->by[ii][j];
+	bval->uiib1[i][j][1] = agrid->u[ii][j][1]*reflect_s;
+      }
+    }
+  }
+
+/*----------------------- Continue with Outer 1 boundary ---------------------*/
+
+  if (agrid->noib1 == 1) {reflect_s = -1.0;} else {reflect_s = 1.0;}
+
+/* Do noib1=3 (inflow) */
+
+  if (agrid->noib1 == 3) {
+    for (i=0; i<4; i++) {
+      for (j=is2-4; j<=ie2+4; j++){
+	for (n=0; n<NVAR; n++) {
+	  bval->uoib1[i][j][n] = agrid->boundary_values.uoib1[i][j][n];
+	}
+	bval->bxoib1[i][j] = agrid->boundary_values.bxoib1[i][j];
+	bval->byoib1[i][j] = agrid->boundary_values.byoib1[i][j];
+      }
+    }
+
+/* Do noib1=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
+/* Note Bx ghost zones start at ie+2 rather than ie+1 */
+
+  } else {
+    for (i=0; i<4; i++) {
+      switch(agrid->noib1){
+      case 1:
+	ii = ie1-i;  break;
+      case 2:
+	ii = ie1;  break;
+      case 4:
+	ii = is1+i;  break;
+      default:
+	fprintf(stderr,"[set_bval_arrays]: agrid->noib1 = %d unknown\n",
+		agrid->noib1);
+	ii = ie1; /* Choose outflow as default */
+      }
+      for(j=is2-4; j<=ie2+4; j++){
+	for (n=0; n<NVAR; n++) {
+	  bval->uoib1[i][j][n] = agrid->u[ii][j][n];
+	}
+	bval->bxoib1[i][j] = agrid->bx[ii+1][j];
+	bval->byoib1[i][j] = agrid->by[ii][j];
+	bval->uoib1[i][j][1] = agrid->u[ii][j][1]*reflect_s;
+      }
+    }
+  }
+
+
+/*----------------------- Continue with Inner 2 boundary ---------------------*/
+
+  if (agrid->niib2 == 1) {reflect_s = -1.0;} else {reflect_s = 1.0;}
+
+/* Do niib2=3 (inflow) */
+
+  if (agrid->niib2 == 3) {
+    for (i=is1-4; i<=ie1+4; i++){
+      for (j=0; j<4; j++) {
+	for (n=0; n<NVAR; n++) {
+	  bval->uiib2[i][j][n] = agrid->boundary_values.uiib2[i][j][n];
+	}
+	bval->bxiib2[i][j] = agrid->boundary_values.bxiib2[i][j];
+	bval->byiib2[i][j] = agrid->boundary_values.byiib2[i][j];
+      }
+    }
+
+/* Do niib2=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
+
+  } else {
+    for (i=is1-4; i<=ie1+4; i++){
+      for (j=0; j<4; j++) {
+	switch(agrid->niib2){
+	case 1:
+	  jj = is2+(3-j);  break;
+	case 2:
+	  jj = is2;  break;
+	case 4:
+	  jj = ie2-(3-j);  break;
+	default:
+	  fprintf(stderr,"[set_bval_arrays]: agrid->niib2 = %d unknown\n",
+		  agrid->niib2);
+	  jj = is2; /* Choose outflow as default */
+	}
+	for (n=0; n<NVAR; n++) {
+	  bval->uiib2[i][j][n] = agrid->u[i][jj][n];
+	}
+	bval->bxiib2[i][j] = agrid->bx[i][jj];
+	bval->byiib2[i][j] = agrid->by[i][jj];
+	bval->uiib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
+      }
+    }
+  }
+
+/*----------------------- Continue with Outer 2 boundary ---------------------*/
+
+  if (agrid->noib2 == 1) {reflect_s = -1.0;} else {reflect_s = 1.0;}
+
+/* Do noib2=3 (inflow) */
+
+  if (agrid->noib2 == 3) {
+    for (i=is1-4; i<=ie1+4; i++){
+      for (j=0; j<4; j++) {
+	for (n=0; n<NVAR; n++) {
+	  bval->uoib2[i][j][n] = agrid->boundary_values.uoib2[i][j][n];
+	}
+	bval->bxoib2[i][j] = agrid->boundary_values.bxoib2[i][j];
+	bval->byoib2[i][j] = agrid->boundary_values.byoib2[i][j];
+      }
+    }
+
+/* Do noib2=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
+/* Note Bx ghost zones start at ie+2 rather than ie+1 */
+
+  } else {
+    for(i=is1-4; i<=ie1+4; i++){
+      for (j=0; j<4; j++) {
+	switch(agrid->noib2){
+	case 1:
+	  jj = ie2-j;  break;
+	case 2:
+	  jj = ie2;  break;
+	case 4:
+	  jj = is2+j;  break;
+	default:
+	  fprintf(stderr,"[set_bval_arrays]: agrid->noib2 = %d unknown\n",
+		  agrid->noib2);
+	  jj = ie2; /* Choose outflow as default */
+	}
+	for (n=0; n<NVAR; n++) {
+	  bval->uoib2[i][j][n] = agrid->u[i][jj][n];
+	}
+	bval->bxoib2[i][j] = agrid->bx[i][jj];
+	bval->byoib2[i][j] = agrid->by[i][jj+1];
+	bval->uoib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
+      }
+    }
+  }
+
+}
+
+
+#else /* THREE_D */
+#error : [set_bval_arrays] not yet implemented for 3D
+#endif
