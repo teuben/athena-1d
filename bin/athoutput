@@ -1,0 +1,19 @@
+OUTPUT FILE for ATHENA created on XXX at XXX
+
+   ID       = aa
+   IRES     = 0
+   RES_FILE = res000aa
+   DT_RES   = 1.000000e+00
+   NLIM     = 100000
+   TLIM     = 1.000000e+01
+   DT_HST   = 1.000000e-02
+   DT_HDF   = 1.000000e-01
+   DT_BIN   = 2.500000e-01
+   NXZONES  = 1024
+   XMIN     = 0.000000e+00
+   XMAX     = 1.000000e+00
+   NIIB     = 4
+   NOIB     = 4
+
+Setup complete, entering main loop...
+
