@@ -20,6 +20,7 @@ void main(void)
   char buf[120],id[3],res_file[9];
   FILE *p_input_file,*p_output_file;
   clock_t time0,time1;
+  time_t start;
 /*============================================================================*/
 /* Open and read job control parameters from lines 1-6 of 'athinput' */
 
@@ -32,7 +33,12 @@ void main(void)
     fclose(p_input_file);
     exit(EXIT_FAILURE);
   }
-  fprintf(p_output_file,"OUTPUT FILE for ATHENA created on XXX at XXX\n\n");
+  if(time(&start)>0){ /* current calendar time (UTC) is available */
+    fprintf(p_output_file,"OUTPUT FILE for ATHENA created on %s\n",ctime(&start));
+  }
+  else{
+    fprintf(p_output_file,"OUTPUT FILE for ATHENA created on XXX at XXX\n\n");
+  }
 
   if (fscanf(p_input_file,"%s %[^\n]\n", id, buf) != 2) {
     printf("Error reading id in MAIN\n"); exit(EXIT_FAILURE);
