@@ -13,8 +13,8 @@ void main(void)
 /* Temporary driver program to test Roe's method.                             */
 /*                                                                            */
 /*============================================================================*/
-  static struct grid_block grid_level0;
-  static struct bval_array bval_level0;
+  struct grid_block grid_level0;
+  struct bval_array bval_level0;
   int ires,nlim;
   Real t_res,dt_res,tlim,cpu_time,zcs;
   char buf[120],id[3],res_file[9];
