@@ -18,6 +18,8 @@
 #include <float.h>
 #include "athena.def"
 #include "athena.h"
+
+#if defined(ISOTHERMAL) && defined(HYDRO)
 /*----------------------------- ISOTHERMAL HYDRO -------------------------------
  *
  * Input: v1,v2,v3 = components of velocity
@@ -80,6 +82,9 @@ void Eigensystem4_isothermal_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
    left_eigenmatrix[3][3] = 0.5/(ISOTHERMAL_C_SQ);
 
 }
+#endif
+
+#if defined(ADIABATIC) && defined(HYDRO)
 /*---------------------------- ADIABATIC HYDRO ---------------------------------
  *
  * Input: d,v1,v2,v3,p = primitive variables
@@ -166,6 +171,9 @@ void Eigensystem4_adiabatic_hydro_InPrimVars(Real d, Real v1, Real v2, Real v3,
 /* left_eigenmatrix[4][3] = 0.0; */
    left_eigenmatrix[4][4] = left_eigenmatrix[0][4];
 }
+#endif
+
+#if defined(ISOTHERMAL) && defined(MHD)
 /*----------------------------- ISOTHERMAL MHD ---------------------------------
  *
  * Input: d,v1,v2,v3,b1,b2,b3 = density, velocities, and B field
@@ -333,6 +341,9 @@ void Eigensystem4_isothermal_mhd_InPrimVars(Real d, Real v1, Real v2, Real v3,
    left_eigenmatrix[5][4] = left_eigenmatrix[0][4];
    left_eigenmatrix[5][5] = left_eigenmatrix[0][5];
 }
+#endif
+
+#if defined(ADIABATIC) && defined(MHD)
 /*-------------------------------- ADIABATIC MHD -------------------------------
  *
  * Input: d,v1,v2,v3,p,b1,b2,b3 = density, velocities, pressure, and B field
@@ -530,3 +541,4 @@ void Eigensystem4_adiabatic_mhd_InPrimVars(Real d, Real v1, Real v2, Real v3,
    left_eigenmatrix[6][5] = left_eigenmatrix[0][5];
    left_eigenmatrix[6][6] = left_eigenmatrix[0][6];
 }
+#endif

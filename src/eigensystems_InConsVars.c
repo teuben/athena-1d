@@ -18,6 +18,8 @@
 #include <float.h>
 #include "athena.def"
 #include "athena.h"
+
+#if defined(ISOTHERMAL) && defined(HYDRO)
 /*---------------------------- ISOTHERMAL HYDRO --------------------------------
  * Input Arguments:
  *   v1,v2,v3 = Roe averaged components of velocity
@@ -80,6 +82,9 @@ void Eigensystem4_isothermal_hydro_InConsVars(Real v1, Real v2, Real v3,
 /* left_eigenmatrix[3][2] = 0.0; */
 /* left_eigenmatrix[3][3] = 0.0; */
 }
+#endif
+
+#if defined(ADIABATIC) && defined(HYDRO)
 /*------------------------------- ADIABATIC HYDRO ------------------------------
  *
  * Input: v1,v2,v3,h = Roe averaged velocities and enthalpy
@@ -169,6 +174,10 @@ void Eigensystem4_adiabatic_hydro_InConsVars(Real v1, Real v2, Real v3, Real h,
    left_eigenmatrix[4][3] = left_eigenmatrix[0][3];
    left_eigenmatrix[4][4] = left_eigenmatrix[0][4];
 }
+#endif
+
+
+#if defined(ISOTHERMAL) && defined(MHD)
 /*------------------------------ ISOTHERMAL MHD --------------------------------
  *
  * Input: d,v1,v2,v3,b1,b2,b3 = Roe averaged density, velocities, and B field
@@ -357,6 +366,9 @@ void Eigensystem4_isothermal_mhd_InConsVars(Real d, Real v1, Real v2, Real v3,
    left_eigenmatrix[5][4] = left_eigenmatrix[0][4];
    left_eigenmatrix[5][5] = left_eigenmatrix[0][5];
 }
+#endif
+
+#if defined(ADIABATIC) && defined(MHD)
 /*------------------------------- ADIABATIC MHD --------------------------------
  *
  * Input: d,v1,v2,v3,h,b1,b2,b3 = Roe averaged density, velocities, enthalpy, B
@@ -584,3 +596,4 @@ void Eigensystem4_adiabatic_mhd_InConsVars(Real d, Real v1, Real v2, Real v3,
    left_eigenmatrix[6][5] = left_eigenmatrix[0][5];
    left_eigenmatrix[6][6] = left_eigenmatrix[0][6];
 }
+#endif
