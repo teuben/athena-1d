@@ -8,6 +8,8 @@
 #include "athena.h"
 #include "prototypes.h"
 
+#define SHK_DIRECTION 1
+
 void shkset(FILE *p_input_file, struct grid_block *agrid)
 {
 /* Problem generator for 1-D Riemann problems                                 */
@@ -142,6 +144,8 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
    is1 = agrid->is1;  ie1 = agrid->ie1;
    is2 = agrid->is2;  ie2 = agrid->ie2;
 
+#if SHK_DIRECTION == 1
+
    for(i=is1-2; i<=is1+((ie1-is1+1)/2)-1; i++){
      for(j=is2-2; j<=ie2+2; j++){
        agrid->u[i][j][0] = dl;
@@ -187,7 +191,63 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
      }
    }
 
+#else
+
+   /* In order to solve the same problem as in 1D, only rotating the
+      coordinate system V2 = u, V3 = v, V1 = w and B2 = bx, B3 = by,
+      and B1 = bz. */
+
+
+   for(i=is1-2; i<=ie1+2; i++){
+     for(j=is2-2; j<=is2+((ie2-is2+1)/2)-1; j++){
+       agrid->u[i][j][0] = dl;
+       agrid->u[i][j][1] = wl*dl;
+       agrid->u[i][j][2] = ul*dl;
+       agrid->u[i][j][3] = vl*dl;
+#ifdef MHD
+       agrid->bx[i][j] = bzl;
+       agrid->by[i][j] = bxl;
+       agrid->u[i][j][NVAR-3] = bzl;
+       agrid->u[i][j][NVAR-2] = bxl;
+       agrid->u[i][j][NVAR-1] = byl;
+#endif
+#ifdef ADIABATIC
+       agrid->u[i][j][4] = pl/GAMM1 
+#ifdef MHD
+	 + 0.5*(bxl*bxl + byl*byl + bzl*bzl)
+#endif
+	 + 0.5*dl*(ul*ul + vl*vl + wl*wl);
+#endif
+     }
+   }
+   for(i=is1-2; i<=ie1+2; i++){
+     for(j=is2+((ie2-is2+1)/2); j<=ie2+2; j++){
+       agrid->u[i][j][0] = dr;
+       agrid->u[i][j][1] = wr*dr;
+       agrid->u[i][j][2] = ur*dr;
+       agrid->u[i][j][3] = vr*dr;
+#ifdef MHD
+       agrid->bx[i][j] = bzr;
+       agrid->by[i][j] = bxr;
+       agrid->u[i][j][NVAR-3] = bzr;
+       agrid->u[i][j][NVAR-2] = bxr;
+       agrid->u[i][j][NVAR-1] = byr;
+#endif
+#ifdef ADIABATIC
+       agrid->u[i][j][4] = pr/GAMM1
+#ifdef MHD
+	 + 0.5*(bxr*bxr + byr*byr + bzr*bzr) 
+#endif
+	 + 0.5*dr*(ur*ur + vr*vr + wr*wr);
+#endif
+     }
+   }
+
+#endif /* SHK_DIRECTION */
+
 #else /* THREE_D */
 #error : 3D shkset not yet implemented.
 #endif
 }
+
+#undef SHK_DIRECTION
