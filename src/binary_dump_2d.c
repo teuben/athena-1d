@@ -22,7 +22,7 @@
 #ifdef WRITE_DX_HEADER
 
 #ifdef MHD
-#define NUM_ARRAY (NVAR + 1)
+#define NUM_ARRAY (NVAR + 2)
 #else
 #define NUM_ARRAY (NVAR)
 #endif
@@ -42,6 +42,7 @@ static void write_dx_header(const struct grid_block *agrid){
   char FileName[20]; /* Assume 20 char. is sufficient */
   FILE *pfile; /* Pointer to file. */
   int nzones;
+  int nx, ny;
   char array_name[][18] = 
     {"Mass Density",
      "1-Momentum",
@@ -51,15 +52,16 @@ static void write_dx_header(const struct grid_block *agrid){
      ,"Energy Density"
 #endif
 #ifdef MHD
-     ,"1-Field","2-Field","3-Field","1-Interface-Field"
+     ,"1-Field","2-Field","3-Field"
+     ,"1-Interface-Field","2-Interface-Field"
 #endif
     };
 
-  fprintf(stderr,"The write_dx_header() function is not yet properly implemented for 2D\n");
-
   strcpy(FileName,agrid->bin_file);/* Copy the Data Dump File Name */
   strcat(FileName,".dx"); /* Append ".dx" for the header name */
-  nzones = agrid->ie1 - agrid->is1 + 1;
+  nx = agrid->ie1 - agrid->is1 + 1;
+  ny = agrid->ie2 - agrid->is2 + 1;
+  nzones = nx*ny;
 
   /* Open the output file with the name "FileName" just constructed. */
   if ((pfile = fopen(FileName,"w")) == NULL) {
@@ -77,44 +79,82 @@ static void write_dx_header(const struct grid_block *agrid){
     fprintf(pfile,"data mode lsb binary\n\n");
   }
 
-  fprintf(pfile,"# object 1 is the cell center positions\n");
-  fprintf(pfile,"object 1 class gridpositions counts %d\n",nzones);
-  fprintf(pfile,"origin %g\n",0.5*agrid->dx);
-  fprintf(pfile,"delta  %g\n\n",agrid->dx);
+  fprintf(pfile,"# object 1 is the grid cell corner positions\n");
+  fprintf(pfile,"object 1 class gridpositions counts %d %d\n",nx+1,ny+1);
+  fprintf(pfile,"origin 0 0\n");
+  fprintf(pfile,"delta  %g 0\n",agrid->dx);
+  fprintf(pfile,"delta  0 %g\n\n",agrid->dy);
 
-  fprintf(pfile,"# object 2 is the cell interface positions\n");
-  fprintf(pfile,"object 2 class gridpositions counts %d\n",nzones+1);
-  fprintf(pfile,"origin %g\n",0.0);
-  fprintf(pfile,"delta  %g\n\n",agrid->dx);
+  fprintf(pfile,"# object 2 are the regular connections, quads\n");
+  fprintf(pfile,"object 2 class gridconnections counts %d %d\n\n",nx+1,ny+1);
 
-  fprintf(pfile,"# objects 3 on are the data, which ");
+#ifdef MHD
+  fprintf(pfile,"# object 3 is the cell x-interface positions\n");
+  fprintf(pfile,"object 3 class gridpositions counts %d %d\n",nx+1,ny);
+  fprintf(pfile,"origin 0 %g\n",0.5*agrid->dy);
+  fprintf(pfile,"delta  %g 0\n",agrid->dx);
+  fprintf(pfile,"delta  0 %g\n\n",agrid->dy);
+
+  fprintf(pfile,"# object 4 is the cell y-interface positions\n");
+  fprintf(pfile,"object 4 class gridpositions counts %d %d\n",nx,ny+1);
+  fprintf(pfile,"origin %g 0\n",0.5*agrid->dx);
+  fprintf(pfile,"delta  %g 0\n",agrid->dx);
+  fprintf(pfile,"delta  0 %g\n\n",agrid->dy);
+#endif /* MHD */
+
+  fprintf(pfile,"# objects 5 on are the data, which ");
   fprintf(pfile,"are in a one-to-one correspondence\n");
-  fprintf(pfile,"# with the positions (\"dep\" on positions).\n\n");
+  fprintf(pfile,"# with the connections (\"dep\" on connections).\n\n");
 
-  /* Initialize the byte offset to skip over the first 4 floats */
-  offset = 4*sizeof(float);
+  /* Initialize the byte offset to skip over the header info. */
+  offset = 3*sizeof(int) + 2*sizeof(float);
 
-  for(n=0;n<NUM_ARRAY;n++){
-    offset += nzones*sizeof(float);
+  for(n=0; n<NVAR; n++){
     fprintf(pfile,"# %s\n",array_name[n]);
     fprintf(pfile,"object %d class array type float rank 0 items %d\n",
-	    n+3,(n == (NUM_ARRAY - 1) ? nzones + 1 : nzones));
+	    n+5,nzones);
     fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-    fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+    fprintf(pfile,"attribute \"dep\" string \"connections\"\n\n");
+    offset += nzones*sizeof(float);
   }
 
-  for(n=0;n<72;n++) fputc((int)'#',pfile);
+#ifdef MHD
+  fprintf(pfile,"# %s\n",array_name[NUM_ARRAY-2]);
+  fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	  n+5,nzones+ny);
+  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
+  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+  offset += (nzones + ny)*sizeof(float);
+
+  fprintf(pfile,"# %s\n",array_name[NUM_ARRAY-1]);
+  fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	  n+5,nzones+nx);
+  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
+  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+#endif /* MHD */
+
+  for(n=0; n<72; n++) fputc((int)'#',pfile);
 
   fprintf(pfile,"\n\n# Next we construct a field for each of the objects above.\n");
 
-  for(n=0;n<NUM_ARRAY;n++){
+  for(n=0; n<NVAR; n++){
     fprintf(pfile,"object \"%s\" class field\n",array_name[n]);
-    fprintf(pfile,"component \"positions\" value %d\n",
-	    (n == (NUM_ARRAY - 1) ? 2 : 1));
-    fprintf(pfile,"component \"data\" value %d\n\n",n+3);
+    fprintf(pfile,"component \"positions\" value 1\n");
+    fprintf(pfile,"component \"connections\" value 2\n");
+    fprintf(pfile,"component \"data\" value %d\n\n",n+5);
   }
 
-  for(n=0;n<72;n++) fputc((int)'#',pfile);
+#ifdef MHD
+  fprintf(pfile,"object \"%s\" class field\n",array_name[NUM_ARRAY-2]);
+  fprintf(pfile,"component \"positions\" value 3\n");
+  fprintf(pfile,"component \"data\" value %d\n\n",NUM_ARRAY+3);
+
+  fprintf(pfile,"object \"%s\" class field\n",array_name[NUM_ARRAY-1]);
+  fprintf(pfile,"component \"positions\" value 4\n");
+  fprintf(pfile,"component \"data\" value %d\n\n",NUM_ARRAY+4);
+#endif /* MHD */
+
+  for(n=0; n<72; n++) fputc((int)'#',pfile);
 
   fprintf(pfile,"\n\n# Now we construct a string object");
   fprintf(pfile," which stores the names of the fields.\n");
@@ -136,12 +176,10 @@ static void write_dx_header(const struct grid_block *agrid){
 
 
 
-void binary_dump(struct grid_block *agrid)
-{
+void binary_dump(struct grid_block *agrid){
   FILE *p_binfile;
   int ndata[3],is1,ie1,is2,ie2,i,j,n;
-  float eos[2],*data,*xgrid;
-  int size;
+  float eos[2],*data;
 
   if((p_binfile = fopen(agrid->bin_file,"wb")) == NULL){
     fprintf(stderr,"[binary_dump]: Unable to open \"%s\" file\n",
@@ -165,34 +203,17 @@ void binary_dump(struct grid_block *agrid)
   eos[1] = (float)ISOTHERMAL_C ;
   fwrite(eos,sizeof(float),2,p_binfile);
 
-  /* How much memory do we need to write out a 1D pencil */
-
-  size = 1 + (ndata[0] > ndata[1] ? ndata[0] : ndata[1]); 
-
   /* Allocate Memory */
 
-  if((xgrid = (float *)malloc(size*sizeof(float))) == NULL){
+  if((data = (float *)malloc((1 + ndata[1])*sizeof(float))) == NULL){
     fprintf(stderr,"[binary_dump]: Unable to malloc memory to write binary file %s\n",agrid->bin_file);
     fclose(p_binfile);
     add1_2name(agrid->bin_file);
     return;
   }
 
-  /* Write x-grid cell center positions */
-
-  xgrid[0] = 0.5*(float)agrid->dx;
-  for (i=1;i<ndata[0];i++) xgrid[i] = xgrid[i-1] + (float)agrid->dx;
-  fwrite(xgrid,sizeof(float),ndata[0],p_binfile);
-
-  /* Write y-grid cell center positions */
-
-  xgrid[0] = 0.5*(float)agrid->dy;
-  for (i=1;i<ndata[1];i++) xgrid[i] = xgrid[i-1] + (float)agrid->dy;
-  fwrite(xgrid,sizeof(float),ndata[1],p_binfile);
-
   /* Write data */
 
-  data = xgrid; /* Copy a pointer to the memory we just malloc'd */
   for(n=0; n<NVAR; n++){
     for(i=0; i<ndata[0]; i++){
       for(j=0; j<ndata[1]; j++){
@@ -220,12 +241,10 @@ void binary_dump(struct grid_block *agrid)
 #endif
 
   /* Close dump file, increment filename */
-
   fclose(p_binfile);
 
-  /* Free the memory we malloc'd, but only once. */
-  free(xgrid);
-  data = NULL; 
+  /* Free the memory we malloc'd */
+  free(data);
 
 #ifdef WRITE_DX_HEADER
   write_dx_header(agrid);
