@@ -1,6 +1,8 @@
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H 
 
+#include "athena.h"
+
 void add1_2name(char file[9]);
 
 void binary_dump(struct grid_block *agrid);
