@@ -1,0 +1,24 @@
+#! /bin/csh -f
+#
+
+set log=test1_$$.log
+
+
+echo Simple compile test:
+echo "dim  eos  gas"
+foreach dim (1 2 3)
+  foreach eos (isothermal adiabatic)
+    foreach gas (mhd hydro)
+	echo -n "$dim $eos $gas ..."
+	echo "--------------------------------------------------------"  >> $log
+	echo "configure --with-dim=$dim --with-eos=$eos --with-gas=$gas" >> $log
+	./configure --with-dim=$dim --with-eos=$eos --with-gas=$gas >>& $log
+	make clean compile >>& $log
+	if ($status) then
+		echo "failed"
+	else
+		echo "OK"
+	endif
+    end
+  end
+end
