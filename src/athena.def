@@ -11,6 +11,7 @@
 #define GAMMA 1.66666667
 #define ISOTHERMAL_C 1.0
 #define PROBLEM linear_wave
+#define WRITE_DX_HEADER
 
 /*----------------------------------------------------------------------------*/
 /* macros associated with numerical algorithm (rarely modified) */

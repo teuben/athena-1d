@@ -15,12 +15,29 @@
 #include "prototypes.h"
 
 #ifdef WRITE_DX_HEADER
+
+#ifdef MHD
+#define NUM_ARRAY (NVAR + 1)
+#else
+#define NUM_ARRAY (NVAR)
+#endif
+
 static void write_dx_header(const struct grid_block *agrid){
   int n; /* Dummy loop var */
   int offset; /* Byte offset */
   char FileName[20]; /* Assume 20 char. is sufficient */
   FILE *pfile; /* Pointer to file. */
   int nzones;
+  char array_name[][15] = 
+    {"Mass Density",
+     "1-Momentum",
+     "2-Momentum",
+     "3-Momentum",
+     "Energy Density"
+#ifdef MHD
+     ,"2-Field","3-Field","1-Field"
+#endif
+    };
 
   strcpy(FileName,agrid->bin_file);/* Copy the Data Dump File Name */
   strcat(FileName,".dx"); /* Append ".dx" for the header name */
@@ -55,93 +72,24 @@ static void write_dx_header(const struct grid_block *agrid){
   /* Initialize the byte offset to skip over the first 4 floats */
   offset = 4*sizeof(float);
 
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# mass density\n");
-  fprintf(pfile,"object 2 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 1-momentum\n");
-  fprintf(pfile,"object 3 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 2-momentum\n");
-  fprintf(pfile,"object 4 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 3-momentum\n");
-  fprintf(pfile,"object 5 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# total energy density\n");
-  fprintf(pfile,"object 6 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-#ifdef MHD
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 2-field\n");
-  fprintf(pfile,"object 7 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 3-field\n");
-  fprintf(pfile,"object 8 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-
-  offset += nzones*sizeof(float);
-  fprintf(pfile,"# 1-field\n");
-  fprintf(pfile,"object 9 class array type float rank 0 items %d\n",nzones);
-  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
-  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
-#endif /* MHD */
+  for(n=0;n<NUM_ARRAY;n++){
+    offset += nzones*sizeof(float);
+    fprintf(pfile,"# %s\n",array_name[n]);
+    fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	    n+2,nzones);
+    fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
+    fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+  }
 
   for(n=0;n<72;n++) fputc((int)'#',pfile);
 
   fprintf(pfile,"\n\n# Next we construct a field for each of the objects above.\n");
 
-  fprintf(pfile,"object \"Mass Density\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 2\n\n");
-
-  fprintf(pfile,"object \"1-Momentum\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 3\n\n");
-
-  fprintf(pfile,"object \"2-Momentum\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 4\n\n");
-
-  fprintf(pfile,"object \"3-Momentum\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 5\n\n");
-
-  fprintf(pfile,"object \"Energy Density\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 6\n\n");
-
-#ifdef MHD
-  fprintf(pfile,"object \"2-Field\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 7\n\n");
-
-  fprintf(pfile,"object \"3-Field\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 8\n\n");
-
-  fprintf(pfile,"object \"1-Field\" class field\n");
-  fprintf(pfile,"component \"positions\" value 1\n");
-  fprintf(pfile,"component \"data\" value 9\n\n");
-#endif /* MHD */
+  for(n=0;n<NUM_ARRAY;n++){
+    fprintf(pfile,"object \"%s\" class field\n",array_name[n]);
+    fprintf(pfile,"component \"positions\" value 1\n");
+    fprintf(pfile,"component \"data\" value %d\n\n",n+2);
+  }
 
   for(n=0;n<72;n++) fputc((int)'#',pfile);
 
@@ -151,22 +99,16 @@ static void write_dx_header(const struct grid_block *agrid){
   fprintf(pfile," before importing the data.\n\n");
 
   fprintf(pfile,"object \"Variables\" class string\n");
-  fprintf(pfile," \"Mass Density\"\n");
-  fprintf(pfile," \"1-Momentum\"\n");
-  fprintf(pfile," \"2-Momentum\"\n");
-  fprintf(pfile," \"3-Momentum\"\n");
-#ifdef MHD
-  fprintf(pfile," \"1-Field\"\n");
-  fprintf(pfile," \"2-Field\"\n");
-  fprintf(pfile," \"3-Field\"\n");
-#endif /* MHD */
-  fprintf(pfile," \"Energy Density\"\n");
+  for(n=0;n<NUM_ARRAY;n++){
+    fprintf(pfile," \"%s\"\n",array_name[n]);
+  }
 
   fprintf(pfile,"\nend\n");
 
   fclose(pfile);
   return;
 }
+#undef NUM_ARRAY
 #endif /* WRITE_DX_HEADER */
 
 
