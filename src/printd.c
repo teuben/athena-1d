@@ -55,7 +55,11 @@ void printd(struct grid_block *agrid)
 
 /* Write history file */
 
-   p_hstfile = fopen(agrid->hst_file, "a");
+   if((p_hstfile = fopen(agrid->hst_file,"a")) == NULL){
+     fprintf(stderr,"[printd]: Unable to open \"%s\" file\n",
+	     agrid->hst_file);
+     return;
+   }
    for (i=0; i<NSCAL; i++) {
       fprintf(p_hstfile,"% 14.6e",scal[i]);
    }
