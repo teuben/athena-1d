@@ -20,7 +20,7 @@
 #include "athena.h"
 #include "prototypes.h"
 
-void roe_average(Real wl[NVAR], Real wr[NVAR], Real b1, Real droe,
+void roe_average(Real wl[NWAVE], Real wr[NWAVE], Real b1, Real droe,
 		 Real v1roe, Real v2roe, Real v3roe, Real hroe, Real b2roe, Real b3roe,
 		 Real x, Real y, Real pbl, Real pbr, Real el, Real er)
 {
@@ -40,12 +40,12 @@ void roe_average(Real wl[NVAR], Real wr[NVAR], Real b1, Real droe,
  * factors X and Y are needed to compute the eigenvectors (eqs. B15,B16)
  */
 #ifdef MHD
-   pbl = 0.5*(wl[NVAR-2]*wl[NVAR-2] + wl[NVAR-1]*wl[NVAR-1] + b1*b1);
-   pbr = 0.5*(wr[NVAR-2]*wr[NVAR-2] + wr[NVAR-1]*wr[NVAR-1] + b1*b1);
-   b2roe = (sqrtdr*wl[NVAR-2] + sqrtdl*wr[NVAR-2])/sdlpdr;
-   b3roe = (sqrtdr*wl[NVAR-1] + sqrtdl*wr[NVAR-1])/sdlpdr;
-   x = 0.5*((b2roe*b2roe - wl[NVAR-2]*wr[NVAR-2])
-           +(b3roe*b3roe - wl[NVAR-1]*wr[NVAR-1]))/droe;
+   pbl = 0.5*(wl[NWAVE-2]*wl[NWAVE-2] + wl[NWAVE-1]*wl[NWAVE-1] + b1*b1);
+   pbr = 0.5*(wr[NWAVE-2]*wr[NWAVE-2] + wr[NWAVE-1]*wr[NWAVE-1] + b1*b1);
+   b2roe = (sqrtdr*wl[NWAVE-2] + sqrtdl*wr[NWAVE-2])/sdlpdr;
+   b3roe = (sqrtdr*wl[NWAVE-1] + sqrtdl*wr[NWAVE-1])/sdlpdr;
+   x = 0.5*((b2roe*b2roe - wl[NWAVE-2]*wr[NWAVE-2])
+           +(b3roe*b3roe - wl[NWAVE-1]*wr[NWAVE-1]))/droe;
    y = 0.5*(wl[0] + wr[0])/droe;
 #endif
 #ifdef ADIABATIC
