@@ -59,6 +59,6 @@
 #define GAMM2 (GAMMA - 2.0)
 #define ISOTHERMAL_C_SQ (ISOTHERMAL_C)*(ISOTHERMAL_C)
 
-enum {NXMAX = NX1, NYMAX = NX2, NZMAX = NX3};
+enum {NXMAX = (NX1 > NX2 ? NX1 : NX2) > NX3 ? (NX1 > NX2 ? NX1 : NX2) : NX3};
 
 #endif /* ATHENA_DEFINES_H */
