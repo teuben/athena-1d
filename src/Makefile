@@ -24,7 +24,7 @@ OBJ =   add1_2name.o   \
 EXEDIR = ../bin/
 # macros for sun or SGI
 CC  = gcc
-OPTS = -O3 
+OPTS = -O3 -Wall
 LDR = gcc -O3
 LIB = -lm
 
