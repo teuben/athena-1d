@@ -5,6 +5,8 @@
 
 #define ADIABATIC
 #define MHD
+/* Dimensionality: ONE_D, TWO_D or THREE_D */
+#define ONE_D
 #define NX1 1210
 #define NX2 1
 #define NX3 1
