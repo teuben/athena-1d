@@ -1,3 +1,4 @@
+#if 0
          roe_average(wl[i],wr[i],b1[i],droe,v1roe,v2roe,v3roe,hroe,b1roe,b2roe,
                      b3roe,x,y,pbl,pbr,el,er);
 
@@ -32,3 +33,4 @@
    }
    return(maxevroe);
 }
+#endif
