@@ -8,7 +8,7 @@
 #include "athena.h"
 #include "prototypes.h"
 
-void main(void)
+int main(void)
 {
 /* Temporary driver program to test Roe's method.                             */
 /*                                                                            */
