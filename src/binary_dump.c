@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <endian.h>
 #include "athena.def"
 #include "athena.h"
 #include "prototypes.h"
@@ -21,6 +20,15 @@
 #else
 #define NUM_ARRAY (NVAR)
 #endif
+
+static int big_endian(){
+  short int n = 1;
+  char *ep = (char *)&n;
+
+  return (*ep == 0); /* Returns 1 on a big endian machine */
+}
+
+
 
 static void write_dx_header(const struct grid_block *agrid){
   int n; /* Dummy loop var */
@@ -50,15 +58,14 @@ static void write_dx_header(const struct grid_block *agrid){
   }
 
   fprintf(pfile,"# The default data type is ");
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-  fprintf(pfile,"least-significant-byte first and binary\n");
-  fprintf(pfile,"data mode lsb binary\n\n");
-#elif __BYTE_ORDER == __BIG_ENDIAN
-  fprintf(pfile,"most-significant-byte first and binary\n");
-  fprintf(pfile,"data mode msb binary\n\n");
-#else
-#error : Machine is neither BIG ENDIAN or LITTLE ENDIAN
-#endif /* __BYTE_ORDER */
+  if(big_endian()){
+    fprintf(pfile,"most-significant-byte first and binary\n");
+    fprintf(pfile,"data mode msb binary\n\n");
+  }
+  else{
+    fprintf(pfile,"least-significant-byte first and binary\n");
+    fprintf(pfile,"data mode lsb binary\n\n");
+  }
 
   fprintf(pfile,"# object 1 is the regular positions\n");
   fprintf(pfile,"object 1 class gridpositions counts %d\n",nzones);
