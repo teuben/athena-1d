@@ -13,11 +13,14 @@
 #include "athena.h"
 #include "prototypes.h"
 
-#ifdef TWO_D
-/* Wrap the functions in an ifdef so that we can compile and link the
-   1D and 2D binary data dump files and only the appropriate one will
-   contribute code.  Ultimately this ought to be handled at the
-   configure step. */
+/* Uncommenting the following define will cause the output routines to
+   write the ghost cells as well as the computational cells.  This is
+   usefull for debugging possible errors in setting the boundary
+   conditions. */
+/*
+  #define WRITE_GHOST_CELLS
+*/
+
 
 #ifdef WRITE_DX_HEADER
 
@@ -59,8 +62,13 @@ static void write_dx_header(const struct grid_block *agrid){
 
   strcpy(FileName,agrid->bin_file);/* Copy the Data Dump File Name */
   strcat(FileName,".dx"); /* Append ".dx" for the header name */
+#ifdef WRITE_GHOST_CELLS
+  nx = agrid->ie1 - agrid->is1 + 9;
+  ny = agrid->ie2 - agrid->is2 + 9;
+#else
   nx = agrid->ie1 - agrid->is1 + 1;
   ny = agrid->ie2 - agrid->is2 + 1;
+#endif
   nzones = nx*ny;
 
   /* Open the output file with the name "FileName" just constructed. */
@@ -90,13 +98,22 @@ static void write_dx_header(const struct grid_block *agrid){
 
 #ifdef MHD
   fprintf(pfile,"# object 3 is the cell x-interface positions\n");
+#ifdef WRITE_GHOST_CELLS
+  fprintf(pfile,"object 3 class gridpositions counts %d %d\n",nx,ny);
+#else
   fprintf(pfile,"object 3 class gridpositions counts %d %d\n",nx+1,ny);
+#endif
   fprintf(pfile,"origin 0 %g\n",0.5*agrid->dy);
   fprintf(pfile,"delta  %g 0\n",agrid->dx);
   fprintf(pfile,"delta  0 %g\n\n",agrid->dy);
 
   fprintf(pfile,"# object 4 is the cell y-interface positions\n");
   fprintf(pfile,"object 4 class gridpositions counts %d %d\n",nx,ny+1);
+#ifdef WRITE_GHOST_CELLS
+  fprintf(pfile,"object 4 class gridpositions counts %d %d\n",nx,ny);
+#else
+  fprintf(pfile,"object 4 class gridpositions counts %d %d\n",nx,ny+1);
+#endif
   fprintf(pfile,"origin %g 0\n",0.5*agrid->dx);
   fprintf(pfile,"delta  %g 0\n",agrid->dx);
   fprintf(pfile,"delta  0 %g\n\n",agrid->dy);
@@ -120,15 +137,30 @@ static void write_dx_header(const struct grid_block *agrid){
 
 #ifdef MHD
   fprintf(pfile,"# %s\n",array_name[NUM_ARRAY-2]);
+#ifdef WRITE_GHOST_CELLS
+  fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	  n+5,nzones);
+#else
   fprintf(pfile,"object %d class array type float rank 0 items %d\n",
 	  n+5,nzones+ny);
+#endif
   fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
   fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+
+#ifndef WRITE_GHOST_CELLS
+  /* If we are not writing out the ghost cells, there is one more
+     column of interface fields. */
   offset += (nzones + ny)*sizeof(float);
+#endif
 
   fprintf(pfile,"# %s\n",array_name[NUM_ARRAY-1]);
+#ifdef WRITE_GHOST_CELLS
   fprintf(pfile,"object %d class array type float rank 0 items %d\n",
-	  n+5,nzones+nx);
+	  n+6,nzones);
+#else
+  fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	  n+6,nzones+nx);
+#endif
   fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
   fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
 #endif /* MHD */
@@ -192,8 +224,13 @@ void binary_dump(struct grid_block *agrid){
   ie2 = agrid->ie2;
   /* Write number of zones and variables */
 
+#ifdef WRITE_GHOST_CELLS
+  ndata[0] = ie1-is1+9;
+  ndata[1] = ie2-is2+9;
+#else
   ndata[0] = ie1-is1+1;
   ndata[1] = ie2-is2+1;
+#endif
   ndata[2] = NVAR;
   fwrite(ndata,sizeof(int),3,p_binfile);
 
@@ -217,13 +254,34 @@ void binary_dump(struct grid_block *agrid){
   for(n=0; n<NVAR; n++){
     for(i=0; i<ndata[0]; i++){
       for(j=0; j<ndata[1]; j++){
+#ifdef WRITE_GHOST_CELLS
+	data[j] = (float)agrid->u[i+is1-4][j+is2-4][n];
+#else
 	data[j] = (float)agrid->u[i+is1][j+is2][n];
+#endif
       }
       fwrite(data,sizeof(float),ndata[1],p_binfile);
     }
   }
 
 #ifdef MHD
+#ifdef WRITE_GHOST_CELLS
+  /* Write out the interface magnetic fields */
+  for(i=0; i<ndata[0]; i++){
+    for(j=0; j<ndata[1]; j++){
+      data[j] = (float)agrid->bx[i+is1-4][j+is2-4];
+    }
+    fwrite(data,sizeof(float),ndata[1],p_binfile);
+  }
+
+  for(i=0; i<ndata[0]; i++){
+    for(j=0; j<ndata[1]; j++){
+      data[j] = (float)agrid->by[i+is1-4][j+is2-4];
+    }
+    fwrite(data,sizeof(float),1+ndata[1],p_binfile);
+  }
+#else
+
   /* Write out the interface magnetic fields */
   for(i=0; i<=ndata[0]; i++){
     for(j=0; j<ndata[1]; j++){
@@ -239,6 +297,7 @@ void binary_dump(struct grid_block *agrid){
     fwrite(data,sizeof(float),1+ndata[1],p_binfile);
   }
 #endif
+#endif
 
   /* Close dump file, increment filename */
   fclose(p_binfile);
@@ -252,4 +311,3 @@ void binary_dump(struct grid_block *agrid){
   add1_2name(agrid->bin_file);
 }
 
-#endif /* TWO_D */
