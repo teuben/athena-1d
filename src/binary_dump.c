@@ -17,10 +17,14 @@ void binary_dump(struct grid_block *agrid)
   FILE *p_binfile;
   int ndata[2],nzones,is,ie,i,n;
   float eos[2],*data,*xgrid;
+
+  if((p_binfile = fopen(agrid->bin_file,"wb")) == NULL){
+    fprintf(stderr,"[binary_dump]: Unable to open \"%s\" file\n",
+	    agrid->bin_file);
+    return;
+  }
   is = agrid->is;
   ie = agrid->ie;
-  p_binfile = fopen(agrid->bin_file,"wb");
-
   /* Write number of zones and variables */
 
   ndata[0] = ie-is+1;
