@@ -7,6 +7,7 @@
  *
  *============================================================================*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "athena.def"
 #include "athena.h"
 void binary_dump(struct grid_block *agrid)
