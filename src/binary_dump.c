@@ -94,38 +94,44 @@ static void write_dx_header(const struct grid_block *agrid){
   /* Initialize the byte offset to skip over the first 4 floats */
   offset = 2*sizeof(int) + 2*sizeof(float);
 
-  for(n=0;n<NUM_ARRAY;n++){
+  for(n=0; n<NVAR; n++){
     offset += nzones*sizeof(float);
     fprintf(pfile,"# %s\n",array_name[n]);
-#ifdef MHD
-    /* The last item is the x-interface field for which there is 1
-       extra element */
-    fprintf(pfile,"object %d class array type float rank 0 items %d\n",
-	    n+3,(n == (NUM_ARRAY - 1) ? nzones + 1 : nzones));
-#else
     fprintf(pfile,"object %d class array type float rank 0 items %d\n",
 	    n+3,nzones);
-#endif /* MHD */
     fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
     fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
   }
 
-  for(n=0;n<72;n++) fputc((int)'#',pfile);
+#ifdef MHD
+  /* The last item is the x-interface field for which there is 1 extra
+       element */
+  offset += nzones*sizeof(float);
+  fprintf(pfile,"# %s\n",array_name[NUM_ARRAY-1]);
+  fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	  n+3,nzones+1);
+  fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
+  fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
+#endif /* MHD */
+
+
+  for(n=0; n<72; n++) fputc((int)'#',pfile);
 
   fprintf(pfile,"\n\n# Next we construct a field for each of the objects above.\n");
 
-  for(n=0;n<NUM_ARRAY;n++){
+  for(n=0; n<NVAR; n++){
     fprintf(pfile,"object \"%s\" class field\n",array_name[n]);
-#ifdef MHD
-    fprintf(pfile,"component \"positions\" value %d\n",
-	    (n == (NUM_ARRAY - 1) ? 2 : 1));
-#else
     fprintf(pfile,"component \"positions\" value 1\n");
-#endif /* MHD */
     fprintf(pfile,"component \"data\" value %d\n\n",n+3);
   }
 
-  for(n=0;n<72;n++) fputc((int)'#',pfile);
+#ifdef MHD
+  fprintf(pfile,"object \"%s\" class field\n",array_name[NUM_ARRAY-1]);
+  fprintf(pfile,"component \"positions\" value 2\n");
+  fprintf(pfile,"component \"data\" value %d\n\n",NUM_ARRAY+2);
+#endif /* MHD */
+
+  for(n=0; n<72; n++) fputc((int)'#',pfile);
 
   fprintf(pfile,"\n\n# Now we construct a string object");
   fprintf(pfile," which stores the names of the fields.\n");
