@@ -18,8 +18,8 @@
 #define NX1 1210
 #define NX2 1
 #define NX3 1
-#define GAMMA 1.66666667
-#define ISOTHERMAL_C 1.0
+#define GAMMA 1.66666667        /* only if adiabatic */
+#define ISOTHERMAL_C 1.0	/* only if isothermal */
 #define PROBLEM @PROBLEM@
 #define WRITE_DX_HEADER
 				/* Real: DOUBLE_PREC or SINGLE_PREC */
