@@ -4,11 +4,13 @@
 #-------------------  object files  ------------------------------------
 OBJ =   add1_2name.o   \
 	binary_dump.o \
+	binary_dump_2d.o \
 	data_output.o \
 	eigensystems_InConsVars.o \
 	eigensystems_InPrimVars.o \
 	init_dt.o \
 	init_grid_block.o \
+	init_grid_block_2d.o \
 	integrate_1step.o \
 	lr_states.o \
 	main.o \

@@ -7,7 +7,16 @@
 #include "athena.def"
 #include "athena.h"
 #include "prototypes.h"
+
 void PROBLEM (FILE *p_input_file, struct grid_block *agrid);
+
+
+#ifdef ONE_D
+/* Wrap the function in an ifdef so that we can compile and link the
+   1D and 2D init_grid_block files and only the appropriate one will
+   contribute code.  Ultimately this ought to be handled at the
+   configure step. */
+
 
 void init_grid_block(FILE *p_input_file, FILE *p_output_file,
    struct grid_block *agrid)
@@ -171,3 +180,5 @@ void init_grid_block(FILE *p_input_file, FILE *p_output_file,
    agrid->time = 0.0;
    agrid->dt = init_dt(agrid);
 }
+
+#endif /* ONE_D */
