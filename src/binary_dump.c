@@ -123,7 +123,7 @@ static void write_dx_header(const struct grid_block *agrid){
 void binary_dump(struct grid_block *agrid)
 {
   FILE *p_binfile;
-  int ndata[2],nzones,is,ie,i,n;
+  int ndata[2],is,ie,i,n;
   float eos[2],*data,*xgrid;
 
   if((p_binfile = fopen(agrid->bin_file,"wb")) == NULL){
@@ -150,15 +150,20 @@ void binary_dump(struct grid_block *agrid)
 
   /* Write grid */
 
-  nzones = ndata[0];
-  xgrid = (float *) malloc(ndata[0]*sizeof(float));
+  if((xgrid = (float *)malloc(ndata[0]*sizeof(float))) == NULL){
+    fprintf(stderr,"[binary_dump]: Unable to malloc memory to write binary file %s\n",agrid->bin_file);
+    fclose(p_binfile);
+    add1_2name(agrid->bin_file);
+    return;
+  }
+
   xgrid[0] = 0.5*(float)agrid->dx;
   for (i=1;i<ndata[0];i++) xgrid[i] = xgrid[i-1] + (float)agrid->dx;
   fwrite(xgrid,sizeof(float),ndata[0],p_binfile);
 
   /* Write data */
 
-  data = (float *) malloc(ndata[0]*sizeof(float));
+  data = xgrid; /* Copy a pointer to the memory we just malloc'd */
   for (n=0;n<NVAR; n++) {
     for (i=0;i<ndata[0]; i++) {data[i] = (float)agrid->u[i+is][n];}
     fwrite(data,sizeof(float),ndata[0],p_binfile);
@@ -172,6 +177,11 @@ void binary_dump(struct grid_block *agrid)
   /* Close dump file, increment filename */
 
   fclose(p_binfile);
+
+  /* Free the memory we malloc'd, but only once. */
+  free(xgrid);
+  data = NULL; 
+
 #ifdef WRITE_DX_HEADER
   write_dx_header(agrid);
 #endif /* WRITE_DX_HEADER */
