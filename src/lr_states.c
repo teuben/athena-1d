@@ -25,28 +25,29 @@
 #include "athena.h"
 #include "prototypes.h"
 
-Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
-   int ib, int ie, Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR])
+Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX], Real dtodx,
+	       int ib, int ie, Real wl[NXMAX][NWAVE], Real wr[NXMAX][NWAVE])
 {
   int i,n,m;
-  Real w[NXMAX][NVAR],pb=0.0,ke;
-  Real ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],b1c=0.0,maxevlr=0.0;
-  Real ev_ip1[NVAR],rem_ip1[NVAR][NVAR],lem_ip1[NVAR][NVAR];
-  Real dwc[NVAR],dwl[NVAR],dwr[NVAR],dwg[NVAR],dwm[NXMAX][NVAR];
-  Real dac[NVAR],dal[NVAR],dar[NVAR],dag[NVAR],da[NVAR];
+  Real w[NXMAX][NWAVE],pb=0.0,ke;
+  Real ev[NWAVE],rem[NWAVE][NWAVE],lem[NWAVE][NWAVE],b1c=0.0,maxevlr=0.0;
+  Real ev_ip1[NWAVE],rem_ip1[NWAVE][NWAVE],lem_ip1[NWAVE][NWAVE];
+  Real dwc[NWAVE],dwl[NWAVE],dwr[NWAVE],dwg[NWAVE],dwm[NXMAX][NWAVE];
+  Real dac[NWAVE],dal[NWAVE],dar[NWAVE],dag[NWAVE],da[NWAVE];
 #ifdef THIRD_ORDER
-  Real wim1h[NXMAX][NVAR];
+  Real wim1h[NXMAX][NWAVE];
 #endif
-  Real wlv[NVAR],wrv[NVAR],dw[NVAR],w6[NVAR];
+  Real wlv[NWAVE],wrv[NWAVE],dw[NWAVE],w6[NWAVE];
   Real qa,qd,qe,qx;
 
-   for (n=0; n<NVAR; n++) {
-   for (m=0; m<NVAR; m++) {
+  for (n=0; n<NWAVE; n++) {
+    for (m=0; m<NWAVE; m++) {
       rem[n][m] = 0.0;
       lem[n][m] = 0.0;
       rem_ip1[n][m] = 0.0;
       lem_ip1[n][m] = 0.0;
-   }}
+    }
+  }
 
 /*--- Step 1. ------------------------------------------------------------------
  * Transform to primitive variables, W=(d,v1,v2,v3,[P],[b2,b3])
@@ -57,10 +58,11 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
       w[i][2] = u[i][2]/u[i][0];
       w[i][3] = u[i][3]/u[i][0];
 #ifdef MHD
-      w[i][NVAR-2] = u[i][NVAR-2];
-      w[i][NVAR-1] = u[i][NVAR-1];
-      pb = 0.5*(u[i][NVAR-2]*u[i][NVAR-2] + u[i][NVAR-1]*u[i][NVAR-1]) + 
-          0.25*(b1[i]*b1[i] + b1[i+1]*b1[i+1]);
+      w[i][NWAVE-2] = u[i][NVAR-2];
+      w[i][NWAVE-1] = u[i][NVAR-1];
+      pb = 0.5*(u[i][NVAR-2]*u[i][NVAR-2] + u[i][NVAR-1]*u[i][NVAR-1] + 
+		u[i][NVAR-3]*u[i][NVAR-3] + 
+		ONE_3RD*(b1[i] - u[i][NVAR-3])*(b1[i] - u[i][NVAR-3]) );
 #endif
 #ifdef ADIABATIC
       ke = 0.5*w[i][0]*(w[i][1]*w[i][1] + w[i][2]*w[i][2] + w[i][3]*w[i][3]);
@@ -83,20 +85,20 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 	 w[i][3],w[i][4],ev,rem,lem);
 #endif
 #if defined(ISOTHERMAL) AND defined(MHD)
-      b1c = 0.5*(b1[i]+b1[i+1]);
+      b1c = u[i][NVAR-3];
       Eigensystem4_isothermal_mhd_InPrimVars(w[i][0],w[i][1],w[i][2],
          w[i][3],b1c,w[i][4],w[i][5],ev,rem,lem);
 #endif
 #if defined(ADIABATIC) AND defined(MHD)
-      b1c = 0.5*(b1[i]+b1[i+1]);
+      b1c = u[i][NVAR-3];
       Eigensystem4_adiabatic_mhd_InPrimVars(w[i][0],w[i][1],w[i][2],
          w[i][3],w[i][4],b1c,w[i][5],w[i][6],ev,rem,lem);
 #endif
-      maxevlr = MAX(maxevlr,(MAX(fabs(ev[0]),fabs(ev[NVAR-1]))));
+      maxevlr = MAX(maxevlr,(MAX(fabs(ev[0]),fabs(ev[NWAVE-1]))));
 
 /* Compute centered, L/R, and van Leer differences of primitive variables */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dwc[n] = w[i+1][n] - w[i-1][n];
          dwl[n] = w[i  ][n] - w[i-1][n];
          dwr[n] = w[i+1][n] - w[i  ][n];
@@ -109,12 +111,12 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Project differences of primitive variables along characteristics */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dac[n] = lem[n][0]*dwc[0];
          dal[n] = lem[n][0]*dwl[0];
          dar[n] = lem[n][0]*dwr[0];
          dag[n] = lem[n][0]*dwg[0];
-         for (m=1; m<NVAR; m++) {
+         for (m=1; m<NWAVE; m++) {
             dac[n] += lem[n][m]*dwc[m];
             dal[n] += lem[n][m]*dwl[m];
             dar[n] += lem[n][m]*dwr[m];
@@ -124,7 +126,7 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Apply monotonicity constraint to projections along characteristics */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          da[n] = 0.0;
          if (dal[n]*dar[n] > 0.0) {
            da[n] = SIGN(dac[n])*MIN(2.0*MIN(    fabs(dal[n]),fabs(dar[n])),
@@ -134,9 +136,9 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Compute monotonic slopes of primitive variables from projections */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dwm[i][n] = da[0]*rem[n][0];
-         for (m=1; m<NVAR; m++) {
+         for (m=1; m<NWAVE; m++) {
             dwm[i][n] += da[m]*rem[n][m];
          }
       }
@@ -149,7 +151,7 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
  */
 
 #ifdef THIRD_ORDER
-   for (n=0; n<NVAR; n++) {
+   for (n=0; n<NWAVE; n++) {
      wim1h[ib-1][n] = .5*(w[ib-1][n]+w[ib-2][n])-(dwm[ib-1][n]-dwm[ib-2][n])/6.;
    }
 #endif
@@ -175,20 +177,20 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 	 w[i+1][2],w[i+1][3],w[i+1][4],ev_ip1,rem_ip1,lem_ip1);
 #endif
 #if defined(ISOTHERMAL) AND defined(MHD)
-      b1c = 0.5*(b1[i+1]+b1[i+2]);
+      b1c = u[i+1][NVAR-3];
       Eigensystem4_isothermal_mhd_InPrimVars(w[i+1][0],w[i+1][1],
 	 w[i+1][2],w[i+1][3],b1c,w[i+1][4],w[i+1][5],ev_ip1,rem_ip1,lem_ip1);
 #endif
 #if defined(ADIABATIC) AND defined(MHD)
-      b1c = 0.5*(b1[i+1]+b1[i+2]);
+      b1c = u[i+1][NVAR-3];
       Eigensystem4_adiabatic_mhd_InPrimVars(w[i+1][0],w[i+1][1],w[i+1][2]
          ,w[i+1][3],w[i+1][4],b1c,w[i+1][5],w[i+1][6],ev_ip1,rem_ip1,lem_ip1);
 #endif
-      maxevlr = MAX(maxevlr,(MAX(fabs(ev_ip1[0]),fabs(ev_ip1[NVAR-1]))));
+      maxevlr = MAX(maxevlr,(MAX(fabs(ev_ip1[0]),fabs(ev_ip1[NWAVE-1]))));
 
 /* Compute centered, L/R, and van Leer differences of primitive variables */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dwc[n] = w[i+2][n] - w[i  ][n];
          dwl[n] = w[i+1][n] - w[i  ][n];
          dwr[n] = w[i+2][n] - w[i+1][n];
@@ -201,12 +203,12 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Project differences of primitive variables along characteristics */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dac[n] = lem_ip1[n][0]*dwc[0];
          dal[n] = lem_ip1[n][0]*dwl[0];
          dar[n] = lem_ip1[n][0]*dwr[0];
          dag[n] = lem_ip1[n][0]*dwg[0];
-         for (m=1; m<NVAR; m++) {
+         for (m=1; m<NWAVE; m++) {
             dac[n] += lem_ip1[n][m]*dwc[m];
             dal[n] += lem_ip1[n][m]*dwl[m];
             dar[n] += lem_ip1[n][m]*dwr[m];
@@ -216,7 +218,7 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Apply monotonicity constraint to projections along characteristics */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          da[n] = 0.0;
          if (dal[n]*dar[n] > 0.0) {
             da[n] = SIGN(dac[n])*MIN(2.0*MIN(    fabs(dal[n]),fabs(dar[n])),
@@ -226,9 +228,9 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Compute monotonic slopes of primitive variables from projections */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          dwm[i+1][n] = da[0]*rem_ip1[n][0];
-         for (m=1; m<NVAR; m++) {
+         for (m=1; m<NWAVE; m++) {
             dwm[i+1][n] += da[m]*rem_ip1[n][m];
          }
       }
@@ -238,23 +240,23 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
  * and right-edges of cell i (the a_L,i and a_R,i).
  */
 #ifdef THIRD_ORDER
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          wim1h[i+1][n] = 0.5*(w[i+1][n]+w[i][n]) - (dwm[i+1][n]-dwm[i][n])/6.0;
       }
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          wlv[n] = wim1h[i  ][n];
          wrv[n] = wim1h[i+1][n];
       }
 #endif
 #ifdef SECOND_ORDER
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          wlv[n] = w[i][n] - 0.5*dwm[i][n];
          wrv[n] = w[i][n] + 0.5*dwm[i][n];
       }
 #endif
 /* Ensure the a_L,i and a_R,i lie between cell-center values */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          wlv[n] = MAX(MIN(w[i][n],w[i-1][n]),wlv[n]);
          wlv[n] = MIN(MAX(w[i][n],w[i-1][n]),wlv[n]);
          wrv[n] = MAX(MIN(w[i][n],w[i+1][n]),wrv[n]);
@@ -263,7 +265,7 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
 
 /* Monotonize again (CW eqn 1.10) */
 
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          qa = (wrv[n]-w[i][n])*(w[i][n]-wlv[n]);
          qd = wrv[n]-wlv[n];
          qe = 6.0*(w[i][n] - 0.5*(wlv[n]+wrv[n]));
@@ -287,45 +289,45 @@ Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
  * left(right)-state at interface i+1/2 (i-1/2) is on the right(left)-side of
  * cell i
  */
-      qx = TWO_3RDS*MAX(ev[NVAR-1],0.0)*dtodx;
-      for (n=0; n<NVAR; n++) {
+      qx = TWO_3RDS*MAX(ev[NWAVE-1],0.0)*dtodx;
+      for (n=0; n<NWAVE; n++) {
          wl[i+1][n] = wrv[n] - 0.75*qx*(dw[n] - (1.0 - qx)*w6[n]);
       }
       qx = -TWO_3RDS*MIN(ev[0],0.0)*dtodx;
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          wr[i][n] = wlv[n] + 0.75*qx*(dw[n] + (1.0 - qx)*w6[n]);
       }
 /*
  * Then subtract amount of each wave m that does not reach the interface
  * during timestep (CW eqn 3.5ff)
  */
-      for (n=0; n<NVAR-1; n++) {
+      for (n=0; n<NWAVE-1; n++) {
       if (ev[n] > 0.) {
          qa  = 0.0;
-         for (m=0; m<NVAR; m++) {
+         for (m=0; m<NWAVE; m++) {
             qa += lem[n][m]*0.5*dtodx*
-             ( (ev[NVAR-1]-ev[n])*(dw[m]-w6[m]) + dtodx*TWO_3RDS*w6[m]*
-               (ev[NVAR-1]*ev[NVAR-1] - ev[n]*ev[n]) );
+             ( (ev[NWAVE-1]-ev[n])*(dw[m]-w6[m]) + dtodx*TWO_3RDS*w6[m]*
+               (ev[NWAVE-1]*ev[NWAVE-1] - ev[n]*ev[n]) );
          }
-         for (m=0; m<NVAR; m++) {wl[i+1][m] += qa*rem[m][n];}
+         for (m=0; m<NWAVE; m++) {wl[i+1][m] += qa*rem[m][n];}
       }}
 
-      for (n=1; n<NVAR; n++) {
+      for (n=1; n<NWAVE; n++) {
       if (ev[n] < 0.) {
          qa = 0.0;
-         for (m=0; m<NVAR; m++) {
+         for (m=0; m<NWAVE; m++) {
             qa += lem[n][m]*0.5*dtodx*
              ( (ev[0]-ev[n])*(dw[m]+w6[m]) + dtodx*TWO_3RDS*w6[m]*
                (ev[0]*ev[0] - ev[n]*ev[n]) );
          }
-         for (m=0; m<NVAR; m++) {wr[i][m] += qa*rem[m][n];}
+         for (m=0; m<NWAVE; m++) {wr[i][m] += qa*rem[m][n];}
       }}
 
 /* Save eigenvalues and eigenmatrices at i+1 for use in next iteration */
 
-      for (m=0; m<NVAR; m++) {
+      for (m=0; m<NWAVE; m++) {
       ev[m] = ev_ip1[m];
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {
          rem[m][n] = rem_ip1[m][n];
          lem[m][n] = lem_ip1[m][n];
       }}
