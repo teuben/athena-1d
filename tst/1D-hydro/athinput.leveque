@@ -1,0 +1,29 @@
+aa       ! ID = two-letter problem ID added to end of filenames
+0        ! RESTART_FLAG = 0 for new job, 1 for restart
+res000aa ! RESTART_FILE = name of restart file
+1.0      ! DT_RES  = time increment between restart dumps
+1000    ! NLIM = cycle limit
+0.20      ! TLIM = time limit
+0.01      ! DT_HST = time increment between history dumps
+0.1      ! DT_HDF  = time increment between HDF-SDS dumps
+0.01      ! DT_BIN  = time increment between binary  dumps
+200      ! NXZONES = Number of zones in X-direction
+0.0      ! XMIN = minimum value of X
+1.0      ! XMAX = maximum value of X
+3        ! NIIB = inner-I (X) boundary flag
+2        ! NOIB = outer-I (X) boundary flag
+3.0  ! DIIB
+2.7  ! SXIIB
+0.0        ! SYIIB
+0.0        ! SZIIB
+8.715   ! EIIB
+3.0   !DL
+3.0   !PL
+0.9  !UL
+0.0  !VL
+0.0  !WL
+1.0   !DL
+1.0   !PL
+0.9  !UL
+0.0  !VL
+0.0  !WL
