@@ -44,9 +44,9 @@ void printd(struct grid_block *agrid)
       scal[5] += 0.5*SQR(agrid->u[i][2])/agrid->u[i][0];
       scal[6] += 0.5*SQR(agrid->u[i][3])/agrid->u[i][0];
 #ifdef MHD
-      scal[7] += 0.125*SQR(agrid->bx[i] + agrid->bx[i+1]);
-      scal[8] += 0.25*SQR(agrid->u[i][NVAR-2]);
-      scal[9] += 0.25*SQR(agrid->u[i][NVAR-1]);
+      scal[7] += 0.5*SQR(agrid->u[i][NVAR-3]);
+      scal[8] += 0.5*SQR(agrid->u[i][NVAR-2]);
+      scal[9] += 0.5*SQR(agrid->u[i][NVAR-1]);
 #endif
    }
    for (i=2; i<NSCAL; i++) {
