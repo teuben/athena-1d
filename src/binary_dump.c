@@ -17,7 +17,7 @@
 
 #ifdef MHD
 #define NUM_ARRAY (NVAR + 1)
-#else */
+#else
 #define NUM_ARRAY (NVAR)
 #endif
 
