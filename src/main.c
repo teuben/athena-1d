@@ -140,7 +140,15 @@ int main(void)
 
   time1 = clock();
   cpu_time = (double)(time1-time0)/(double)CLOCKS_PER_SEC;
+#if defined ONE_D
   zcs = (grid_level0.ncycles)*(grid_level0.ie-grid_level0.is+1)/cpu_time;
+#elif defined TWO_D
+  zcs = (grid_level0.ncycles)*(grid_level0.ie1-grid_level0.is1+1)*
+    (grid_level0.ie2-grid_level0.is2+1)/cpu_time;
+#else /* THREE_D */
+  zcs = (grid_level0.ncycles)*(grid_level0.ie1-grid_level0.is1+1)*
+    (grid_level0.ie2-grid_level0.is2+1)*(grid_level0.ie3-grid_level0.is3+1)/cpu_time;
+#endif
 
   if (grid_level0.ncycles == nlim) {
     printf("\nterminating on cycle limit\n");
