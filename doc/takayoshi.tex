@@ -1,0 +1,1180 @@
+From sano@astro.umd.edu Wed Dec 12 15:27:14 2001
+Date: Wed, 12 Dec 2001 15:08:50 -0500
+From: Takayoshi Sano <sano@astro.umd.edu>
+To: jstone@astro.umd.edu
+Subject: Re: .tex file
+
+
+% Hi Jim,
+% This is the tex file.
+% Takayoshi
+
+\documentstyle[aaspp4]{article}
+
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+   $\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+   $\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\def\underwidetilde#1{\mathord{\vtop{\ialign{##\crcr
+   $\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+   $\hfil\widetilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+
+\begin{document}
+
+\section{Roe Matrix for Adiabatic MHD}
+
+\begin{equation}
+\frac{\partial \mbox{\boldmath $u$}}{\partial t} +
+\frac{\partial \mbox{\boldmath $F$}}{\partial x} = 0
+\end{equation}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $u$} =
+\left[
+\begin{array}{c}
+\rho \\
+\rho v_{x} \\
+\rho v_{y} \\
+\rho v_{z} \\
+E \\
+B_{y} \\
+B_{z} \\
+\end{array}
+\right], \;
+\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $F$} =
+\left[
+\begin{array}{c}
+\rho v_{x} \\
+\displaystyle \rho v_{x}^2 + P + \frac{B^2}{8 \pi} - \frac{B_{x}^2}{4 \pi} 
+\vspace{4pt} \\
+\displaystyle \rho v_{x} v_{y} -\frac{B_{x}B_{y}}{4 \pi} 
+\vspace{4pt} \\
+\displaystyle \rho v_{x} v_{z} -\frac{B_{x}B_{z}}{4 \pi} \\
+F_5 \\
+B_{y} v_{x} - B_{x} v_{y} \\
+B_{z} v_{x} - B_{x} v_{z} \\
+\end{array}
+\right]$\end{center}
+
+\begin{equation}
+F_5 = \left( E + P + \frac{B^2}{8 \pi} \right) v_{x} 
+- \frac{B_{x}}{4 \pi} \left( B_{x} v_{x} + B_{y} v_{y} + B_{z} v_{z} \right)
+\end{equation}
+
+\begin{equation}
+E = \frac{P}{\gamma - 1} + \frac12 \rho v^2 + \frac{B^2}{8 \pi}
+\end{equation}
+
+\begin{equation}
+B^2 = B_{x}^2 + B_{y}^2 + B_{z}^2 
+\end{equation}
+
+\begin{equation}
+v^2 = v_{x}^2 + v_{y}^2 + v_{z}^2 
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\widetilde{q} = \frac{\sqrt{\rho_{L}} q_{L} 
++ \sqrt{\rho_{R}} q_{R}}{\sqrt{\rho_{L}} + \sqrt{\rho_{R}}}
+\end{equation}
+
+\begin{equation}
+\underwidetilde{q} = \frac{\sqrt{\rho_{R}} q_{L} 
++ \sqrt{\rho_{L}} q_{R}}{\sqrt{\rho_{L}} + \sqrt{\rho_{R}}}
+\end{equation}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+A =
+\left[
+\begin{array}{ccccccc}
+0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+A_{21} & -(\gamma - 3) \widetilde{v}_{x} & -(\gamma - 1) \widetilde{v}_{y} &
+-(\gamma - 1) \widetilde{v}_{z} & \gamma - 1 & 
+\displaystyle - \frac{\gamma - 2}{4 \pi} \underwidetilde{B}{}_{y}Y & 
+\displaystyle - \frac{\gamma - 2}{4 \pi} \underwidetilde{B}{}_{z}Y  \\
+- \widetilde{v}_{x} \widetilde{v}_{y} & \widetilde{v}_{y} & 
+\widetilde{v}_{x} & 0 & 0 & \displaystyle - \frac{B_{x}}{4 \pi} & 0 \\
+- \widetilde{v}_{x} \widetilde{v}_{z} & \widetilde{v}_{z} & 
+0 & \widetilde{v}_{x} & 0 & 0 & \displaystyle - \frac{B_{x}}{4 \pi} \\
+A_{51} & A_{52} & A_{53} & A_{54} & \gamma \widetilde{v}_{x} & 
+A_{56} & A_{57} \\
+\displaystyle \frac1{\underwidetilde{\rho}} 
+( B_{x} \widetilde{v}_{y} - 
+\underwidetilde{B}{}_{y} \widetilde{v}_{x} ) & 
+\displaystyle \frac1{\underwidetilde{\rho}} \underwidetilde{B}{}_{y} &  
+\displaystyle - \frac{B_{x}}{\underwidetilde{\rho}}  & 0 & 0 & 
+\widetilde{v}_{x} & 0 \vspace{-6pt} \\
+\displaystyle \frac1{\underwidetilde{\rho}} 
+( B_{x} \widetilde{v}_{z} - \underwidetilde{B}{}_{z} \widetilde{v}_{x} ) & 
+\displaystyle \frac1{\underwidetilde{\rho}} \underwidetilde{B}{}_{z} &  
+0 & \displaystyle - \frac{B_{x}}{\underwidetilde{\rho}}  & 0 & 
+0 & \widetilde{v}_{x}  \vspace{-6pt} \\
+\end{array}
+\right]$\end{center}
+
+
+\begin{equation}
+\displaystyle
+A_{21} = - \widetilde{v}_{x}^2 + \frac{\gamma-1}2 \widetilde{v}^2 - 
+(\gamma -2) X 
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{51} = - \widetilde{v}_{x} \widetilde{H} + 
+\frac{\gamma-1}2 \widetilde{v}_{x} \widetilde{v}^2 +
+\frac{B_{x}}{4 \pi \underwidetilde{\rho}}
+(B_{x} \widetilde{v}_{x} + \underwidetilde{B}{}_{y} \widetilde{v}_{y} 
++ \underwidetilde{B}{}_{z} \widetilde{v}_{z} ) 
+- (\gamma - 2) \widetilde{v}_{x} X
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{52} = - (\gamma - 1) \widetilde{v}_{x}^2 + \widetilde{H} - 
+\frac{B_{x}^2}{4 \pi \underwidetilde{\rho}}
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{53} = - (\gamma - 1) \widetilde{v}_{x} \widetilde{v}_{y} -
+\frac{B_{x}}{4 \pi \underwidetilde{\rho}} \underwidetilde{B}{}_{y}
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{54} = - (\gamma - 1) \widetilde{v}_{x} \widetilde{v}_{z} -
+\frac{B_{x}}{4 \pi \underwidetilde{\rho}} \underwidetilde{B}{}_{z}
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{56} = - \frac{B_{x}}{4 \pi} \widetilde{v}_{y} - 
+\frac{\gamma -2}{4 \pi} \underwidetilde{B}{}_{y} \widetilde{v}_{x} Y
+\end{equation}
+
+\begin{equation}
+\displaystyle
+A_{57} = - \frac{B_{x}}{4 \pi} \widetilde{v}_{z} - 
+\frac{\gamma -2}{4 \pi} \underwidetilde{B}{}_{z} \widetilde{v}_{x} Y
+\end{equation}
+
+\begin{equation}
+X = \frac1{8 \pi \underwidetilde{\rho}} 
+[ ( \underwidetilde{B}{}_{y}^2 - B_{y,L} B_{y,R} ) 
++  ( \underwidetilde{B}{}_{z}^2 - B_{z,L} B_{z,R} ) ]
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+Y = \frac{\rho_{L} + \rho_{R}}{2 \underwidetilde{\rho}}
+\vspace{-8pt} 
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\lambda_{e} = \widetilde{v}_{x}, \; 
+\lambda_{a} = \widetilde{v}_{x} \pm b_{x} , \; 
+\lambda_{f,s} = \widetilde{v}_{x} \pm c_{f,s}
+\end{equation}
+
+\begin{equation}
+b_{x}^2 = \frac{B_{x}^2}{4 \pi \underwidetilde{\rho}}
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+c_{f,s}^2 = \frac12 \left( a^{\ast 2} \pm \sqrt{a^{\ast 4} 
+- 4 a^2 b_x^2}\right)
+\end{equation}
+
+\begin{equation}
+a^{\ast 2} = a^2 + b^{\ast 2}
+\end{equation}
+
+\begin{equation}
+a^2 = \left(\gamma -1 \right) \left(\widetilde{H} - \frac{\widetilde{v}}{2} 
+- b^2 \right) - \left(\gamma -2 \right) X
+\end{equation}
+
+\begin{equation}
+b^{\ast 2} = b^2 + \left( \gamma -2 \right) b_{\bot}^2 \left( 1 - Y \right)
+\end{equation}
+
+\begin{equation}
+b^2 = \frac1{4 \pi \rho} \underwidetilde{B}^2, \;
+b_{\bot}^2 = \frac1{4 \pi \rho} ( \underwidetilde{B}{}_{y}^2 + 
+\underwidetilde{B}{}_{z}^2 )
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\beta_{y} = \frac1{| \underwidetilde{B}{}_{\bot} |} \underwidetilde{B}{}_{y}
+, \;
+\beta_{z} = \frac1{| \underwidetilde{B}{}_{\bot} |} \underwidetilde{B}{}_{z}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+\beta_{y}^{\ast} = \frac1{| \underwidetilde{B}{}^{\ast}_{\bot} |} \underwidetilde{B}{}_{y}
+, \;
+\beta_{z}^{\ast} = \frac1{| \underwidetilde{B}{}^{\ast}_{\bot} |} \underwidetilde{B}{}_{z}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+\beta_{\bot}^{\ast 2} = \beta_y^{\ast 2} + \beta_z^{\ast 2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+| \underwidetilde{B}{}_{\bot} | = ( \underwidetilde{B}{}_{y}^{2} +
+\underwidetilde{B}{}_{z}^{2} ) ^{1/2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+| \underwidetilde{B}{}^{\ast}_{\bot} | = \{ ( \underwidetilde{B}{}_{y}^{2} +
+\underwidetilde{B}{}_{z}^{2} ) [1 + ( \gamma - 2 ) (1 - Y)]\}^{1/2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+S = {\rm sign} (B_{x})
+\end{equation}
+
+\begin{equation}
+\alpha_{f}^2 = \frac{a^2 - c_{s}^2}{c_{f}^2 - c_{s}^2}
+, \;
+\alpha_{s}^2 = \frac{c_{f}^2 - a^2}{c_{f}^2 - c_{s}^2}
+\end{equation}
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{e} =
+\left[
+\begin{array}{c}
+1 \\
+\widetilde{v}_{x} \\
+\widetilde{v}_{y} \\
+\widetilde{v}_{z} \\
+\displaystyle
+\frac{\widetilde{v}^2}{2} + \frac{\gamma -2}{\gamma -1} X \\
+0 \\
+0 \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{e}^{\rm T} =
+\frac{\gamma - 1}{a^2}
+\left[
+\begin{array}{c}
+\displaystyle
+\frac{a^2}{\gamma -1} - \frac{\widetilde{v}^2}{2} + 
+\frac{\gamma-2}{\gamma-1} X \\
+\widetilde{v}_{x} \\
+\widetilde{v}_{y} \\
+\widetilde{v}_{z} \\
+-1 \\
+\displaystyle
+\frac1{4 \pi} \underwidetilde{B}{}_{y} \\
+\displaystyle
+\frac1{4 \pi} \underwidetilde{B}{}_{z} \\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{a} =
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+\pm ( \widetilde{v}_{y} \beta_{z} - \widetilde{v}_{z} \beta_{y} ) \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{z} S \vspace{-6pt} \\ 
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{y} S \vspace{-6pt} \\ 
+\end{array} 
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{a}^{\rm T} =
+\frac{1}{2}
+\left[
+\begin{array}{c}
+\mp ( \widetilde{v}_{y} \beta_{z} - \widetilde{v}_{z} \beta_{y}) \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+0 \\
+\displaystyle
+- \biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{z} S \\
+\displaystyle
+\biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{y} S \\
+\end{array}
+\right]$ 
+\end{center}
+
+\newpage
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{f} =
+\left[
+\begin{array}{c}
+\alpha_{f} \\
+\alpha_{f} ( \widetilde{v}_{x} \pm c_{f} ) \\
+\widetilde{v}_{y} \alpha_{f} \mp c_{s} \alpha_{s} \beta^{\ast}_{y} S  \\
+\widetilde{v}_{z} \alpha_{f} \mp c_{s} \alpha_{s} \beta^{\ast}_{z} S  \\
+r_{f5} \\
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta^{\ast}_{y} \vspace{-6pt} \\
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta^{\ast}_{z} \vspace{-6pt} \\
+\end{array}
+\right]$ 
+
+\begin{center}
+\begin{eqnarray}
+\displaystyle
+r_{f5} = \alpha_{f} \biggl( \widetilde{H} - \frac1
+{4 \pi \underwidetilde{\rho}} \underwidetilde{B}^2 
+\pm \widetilde{v}_{x} c_{f} \biggr)
+\mp c_{s} \alpha_{s} S ( \widetilde{v}_{y} \beta^{\ast}_{y} + 
+\widetilde{v}_{z} \beta^{\ast}_{z} )
++ \frac1{( 4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B}{}_{\bot}^{\ast} |
+a \alpha_{s} \beta^{\ast 2}_{\bot} \nonumber
+\end{eqnarray}
+\end{center}
+
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{f}^{\rm T} =
+\frac{\gamma -1}{2 a^2}
+\left[
+\begin{array}{c}
+l_{f1} \\
+\displaystyle
+- \alpha_{f} \biggl( \widetilde{v}_{x} \mp \frac{c_{f}}{\gamma -1} \biggr) \\
+\displaystyle
+- \widetilde{v}_{y} \alpha_{f} \mp \frac1{\gamma -1} c_{s} \alpha_{s}
+\beta^{\ast}_{y} \beta^{\ast}_{\bot} {}^{-2} S \\
+\displaystyle
+- \widetilde{v}_{z} \alpha_{f} \mp \frac1{\gamma -1} c_{s} \alpha_{s}
+\beta^{\ast}_{z} \beta^{\ast}_{\bot} {}^{-2} S \\
+\alpha_{f} \\
+\displaystyle
+- \frac1{4 \pi} \beta^{\ast}_{y} \biggl( 
+| \underwidetilde{B}{}^{\ast}_{\bot} | \alpha_{f} - \frac1{\gamma -1} 
+(4 \pi \underwidetilde{\rho})^{1/2} a \alpha_{s} 
+\beta^{\ast}_{\bot} {}^{-2} \biggr)\\
+\displaystyle
+- \frac1{4 \pi} \beta^{\ast}_{z} \biggl( 
+| \underwidetilde{B}{}^{\ast}_{\bot} | \alpha_{f} - \frac1{\gamma -1} 
+(4 \pi \underwidetilde{\rho})^{1/2} a \alpha_{s} 
+\beta^{\ast}_{\bot} {}^{-2} \biggr)\\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+\begin{eqnarray}
+\displaystyle
+l_{f1} &=& \alpha_{f} \biggl( - \widetilde{H} + \widetilde{v}^2 + 
+\frac1{4 \pi \underwidetilde{\rho}} \underwidetilde{B}^2
+\mp \frac{\widetilde{v}_{x} c_{f}}{\gamma -1} + \frac{c_{f}^2}{\gamma -1} 
+\biggr) \nonumber \\ 
+&& \pm \frac1{\gamma -1} c_{s} \alpha_{s} \beta^{\ast}_{\bot} {}^{-2} S 
+(\widetilde{v}_{y} \beta_{y}^{\ast} + \widetilde{v}_{z} \beta_{z}^{\ast})
+- \frac1{\gamma -1} \frac1{(4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B} {}^{\ast}_{\bot} | a \alpha_{s} \nonumber
+\end{eqnarray}
+\end{center}
+
+\newpage
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{s} =
+\left[
+\begin{array}{c}
+\alpha_{s} \\
+\alpha_{s} ( \widetilde{v}_{x} \pm c_{s} ) \\
+\widetilde{v}_{y} \alpha_{s} \pm c_{f} \alpha_{f} \beta^{\ast}_{y} S  \\
+\widetilde{v}_{z} \alpha_{s} \pm c_{f} \alpha_{f} \beta^{\ast}_{z} S  \\
+r_{s5} \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta^{\ast}_{y} \vspace{-6pt} \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta^{\ast}_{z} \vspace{-6pt} \\
+\end{array}
+\right]$ 
+
+\begin{center}
+\begin{eqnarray}
+\displaystyle
+r_{s5} = \alpha_{s} \biggl( \widetilde{H} - \frac1
+{4 \pi \underwidetilde{\rho}} \underwidetilde{B}^2 
+\pm \widetilde{v}_{x} c_{s} \biggr)
+\pm c_{f} \alpha_{f} S ( \widetilde{v}_{y} \beta^{\ast}_{y} + 
+\widetilde{v}_{z} \beta^{\ast}_{z} )
+- \frac1{( 4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B}{}_{\bot}^{\ast} |
+a \alpha_{f} \beta^{\ast 2}_{\bot} \nonumber
+\end{eqnarray}
+\end{center}
+
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{s}^{\rm T} =
+\frac{\gamma -1}{2 a^2}
+\left[
+\begin{array}{c}
+l_{s1} \\
+\displaystyle
+- \alpha_{s} \biggl( \widetilde{v}_{x} \mp \frac{c_{s}}{\gamma -1} \biggr) \\
+\displaystyle
+- \widetilde{v}_{y} \alpha_{s} \pm \frac1{\gamma -1} c_{f} \alpha_{f}
+\beta^{\ast}_{y} \beta^{\ast}_{\bot} {}^{-2} S \\
+\displaystyle
+- \widetilde{v}_{z} \alpha_{s} \pm \frac1{\gamma -1} c_{f} \alpha_{f}
+\beta^{\ast}_{z} \beta^{\ast}_{\bot} {}^{-2} S \\
+\alpha_{s} \\
+\displaystyle
+- \frac1{4 \pi} \beta^{\ast}_{y} \biggl( 
+| \underwidetilde{B}{}^{\ast}_{\bot} | \alpha_{s} + \frac1{\gamma -1} 
+(4 \pi \underwidetilde{\rho})^{1/2} a \alpha_{f} 
+\beta^{\ast}_{\bot} {}^{-2} \biggr)\\
+\displaystyle
+- \frac1{4 \pi} \beta^{\ast}_{z} \biggl( 
+| \underwidetilde{B}{}^{\ast}_{\bot} | \alpha_{s} + \frac1{\gamma -1} 
+(4 \pi \underwidetilde{\rho})^{1/2} a \alpha_{f} 
+\beta^{\ast}_{\bot} {}^{-2} \biggr)\\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+\begin{eqnarray}
+\displaystyle
+l_{s1} &=& \alpha_{s} \biggl( - \widetilde{H} + \widetilde{v}^2 + 
+\frac1{4 \pi \underwidetilde{\rho}} \underwidetilde{B}^2
+\mp \frac{\widetilde{v}_{x} c_{s}}{\gamma -1} + \frac{c_{s}^2}{\gamma -1} 
+\biggr)  \nonumber \\
+&& \mp \frac1{\gamma -1} c_{f} \alpha_{f} \beta^{\ast}_{\bot} {}^{-2} S 
+(\widetilde{v}_{y} \beta_{y}^{\ast} + \widetilde{v}_{z} \beta_{z}^{\ast})
++ \frac1{\gamma -1} \frac1{(4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B} {}^{\ast}_{\bot} | a \alpha_{f} \nonumber
+\end{eqnarray}
+\end{center}
+
+\newpage
+
+\section{Roe Matrix for Isothermal MHD}
+
+\begin{equation}
+\frac{\partial \mbox{\boldmath $u$}}{\partial t} +
+\frac{\partial \mbox{\boldmath $F$}}{\partial x} = 0
+\end{equation}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $u$} =
+\left[
+\begin{array}{c}
+\rho \\
+\rho v_{x} \\
+\rho v_{y} \\
+\rho v_{z} \\
+B_{y} \\
+B_{z} \\
+\end{array}
+\right], \;
+\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $F$} =
+\left[
+\begin{array}{c}
+\rho v_{x} \\
+\displaystyle \rho v_{x}^2 + P + \frac{B^2}{8 \pi} - \frac{B_{x}^2}{4 \pi} 
+\vspace{4pt} \\
+\displaystyle \rho v_{x} v_{y} -\frac{B_{x}B_{y}}{4 \pi} 
+\vspace{4pt} \\
+\displaystyle \rho v_{x} v_{z} -\frac{B_{x}B_{z}}{4 \pi} \\
+B_{y} v_{x} - B_{x} v_{y} \\
+B_{z} v_{x} - B_{x} v_{z} \\
+\end{array}
+\right]$\end{center}
+
+\begin{equation}
+P = c^2 \rho
+\end{equation}
+
+\begin{equation}
+B^2 = B_{x}^2 + B_{y}^2 + B_{z}^2 
+\end{equation}
+
+\begin{equation}
+v^2 = v_{x}^2 + v_{y}^2 + v_{z}^2 
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\widetilde{q} = \frac{\sqrt{\rho_{L}} q_{L} 
++ \sqrt{\rho_{R}} q_{R}}{\sqrt{\rho_{L}} + \sqrt{\rho_{R}}}
+\end{equation}
+
+\begin{equation}
+\underwidetilde{q} = \frac{\sqrt{\rho_{R}} q_{L} 
++ \sqrt{\rho_{L}} q_{R}}{\sqrt{\rho_{L}} + \sqrt{\rho_{R}}}
+\end{equation}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+A =
+\left[
+\begin{array}{cccccc}
+0 & 1 & 0 & 0 & 0 & 0 \\
+A_{21} & 2 \widetilde{v}_{x} & 0 & 0 & 
+\displaystyle \frac{1}{4 \pi} \underwidetilde{B}{}_{y}Y & 
+\displaystyle \frac{1}{4 \pi} \underwidetilde{B}{}_{z}Y  \\
+- \widetilde{v}_{x} \widetilde{v}_{y} & \widetilde{v}_{y} & 
+\widetilde{v}_{x} & 0 & \displaystyle - \frac{B_{x}}{4 \pi} & 0 \\
+- \widetilde{v}_{x} \widetilde{v}_{z} & \widetilde{v}_{z} & 
+0 & \widetilde{v}_{x} & 0 & - \displaystyle \frac{B_{x}}{4 \pi} \\
+\displaystyle \frac1{\underwidetilde{\rho}} 
+( B_{x} \widetilde{v}_{y} - 
+\underwidetilde{B}{}_{y} \widetilde{v}_{x} ) & 
+\displaystyle \frac1{\underwidetilde{\rho}} \underwidetilde{B}{}_{y} &  
+\displaystyle - \frac{B_{x}}{\underwidetilde{\rho}}  & 0 &
+\widetilde{v}_{x} & 0 \vspace{-6pt} \\
+\displaystyle \frac1{\underwidetilde{\rho}} 
+( B_{x} \widetilde{v}_{z} - \underwidetilde{B}{}_{z} \widetilde{v}_{x} ) & 
+\displaystyle \frac1{\underwidetilde{\rho}} \underwidetilde{B}{}_{z} &  
+0 & \displaystyle - \frac{B_{x}}{\underwidetilde{\rho}}  &
+0 & \widetilde{v}_{x}  \vspace{-6pt} \\
+\end{array}
+\right]$\end{center}
+
+\begin{equation}
+\displaystyle
+A_{21} = - \widetilde{v}_{x}^2 + c^2 + X
+\end{equation}
+
+\begin{equation}
+X = \frac1{8 \pi \underwidetilde{\rho}} 
+[ ( \underwidetilde{B}{}_{y}^2 - B_{y,L} B_{y,R} ) 
++  ( \underwidetilde{B}{}_{z}^2 - B_{z,L} B_{z,R} ) ]
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+Y = \frac{\rho_{L} + \rho_{R}}{2 \underwidetilde{\rho}}
+\vspace{-8pt} 
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\lambda_{a} = \widetilde{v}_{x} \pm b_{x} , \; 
+\lambda_{f,s} = \widetilde{v}_{x} \pm c_{f,s}
+\end{equation}
+
+\begin{equation}
+b_{x}^2 = \frac{B_{x}^2}{4 \pi \underwidetilde{\rho}}
+\vspace{-8pt} 
+\end{equation}
+
+\begin{equation}
+c_{f,s}^2 = \frac12 \left( a^{\ast 2} \pm \sqrt{a^{\ast 4} 
+- 4 a^2 b_x^2}\right)
+\end{equation}
+
+\begin{equation}
+a^{\ast 2} = a^2 + b^{\ast 2}
+\end{equation}
+
+\begin{equation}
+a^2 = c^2 + X
+\end{equation}
+
+\begin{equation}
+b^{\ast 2} = b_x^2 + b_{\bot}^2 Y
+\end{equation}
+
+\begin{equation}
+b^2 = \frac1{4 \pi \rho} \underwidetilde{B}^2, \;
+b_{\bot}^2 = \frac1{4 \pi \rho} ( \underwidetilde{B}{}_{y}^2 + 
+\underwidetilde{B}{}_{z}^2 )
+\end{equation}
+
+\newpage
+
+\begin{equation}
+\beta_{y} = \frac1{| \underwidetilde{B}{}_{\bot} |} \underwidetilde{B}{}_{y}
+, \;
+\beta_{z} = \frac1{| \underwidetilde{B}{}_{\bot} |} \underwidetilde{B}{}_{z}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+\beta_{y}^{\ast} = \frac1{| \underwidetilde{B}{}^{\ast}_{\bot} |} \underwidetilde{B}{}_{y}
+, \;
+\beta_{z}^{\ast} = \frac1{| \underwidetilde{B}{}^{\ast}_{\bot} |} \underwidetilde{B}{}_{z}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+\beta_{\bot}^{\ast 2} = \beta_y^{\ast 2} + \beta_z^{\ast 2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+| \underwidetilde{B}{}_{\bot} | = ( \underwidetilde{B}{}_{y}^{2} +
+\underwidetilde{B}{}_{z}^{2} ) ^{1/2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+| \underwidetilde{B}{}^{\ast}_{\bot} | = [ ( \underwidetilde{B}{}_{y}^{2} +
+\underwidetilde{B}{}_{z}^{2} )Y ]^{1/2}
+\vspace{-8pt}
+\end{equation}
+
+\begin{equation}
+S = {\rm sign} (B_{x})
+\end{equation}
+
+\begin{equation}
+\alpha_{f}^2 = \frac{a^2 - c_{s}^2}{c_{f}^2 - c_{s}^2}
+, \;
+\alpha_{s}^2 = \frac{c_{f}^2 - a^2}{c_{f}^2 - c_{s}^2}
+\end{equation}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{a} =
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{z} S \vspace{-6pt} \\ 
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{y} S \vspace{-6pt} \\ 
+\end{array} 
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{a}^{\rm T} =
+\frac{1}{2}
+\left[
+\begin{array}{c}
+\mp ( \widetilde{v}_{y} \beta_{z} - \widetilde{v}_{z} \beta_{y}) \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+\displaystyle
+- \biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{z} S \\
+\displaystyle
+\biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+\beta_{y} S \\
+\end{array}
+\right]$ 
+\end{center}
+
+\newpage
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{f} =
+\left[
+\begin{array}{c}
+\alpha_{f} \\
+\alpha_{f} ( \widetilde{v}_{x} \pm c_{f} ) \\
+\widetilde{v}_{y} \alpha_{f} \mp c_{s} \alpha_{s} \beta^{\ast}_{y} S  \\
+\widetilde{v}_{z} \alpha_{f} \mp c_{s} \alpha_{s} \beta^{\ast}_{z} S  \\
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta^{\ast}_{y} \vspace{-6pt} \\
+\displaystyle
+\biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta^{\ast}_{z} \vspace{-6pt} \\
+\end{array}
+\right]$ , $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{f}^{\rm T} =
+\frac{1}{2 a^2}
+\left[
+\begin{array}{c}
+l_{f1} \\
+\pm c_f \alpha_f \\
+\mp c_{s} \alpha_{s}
+\beta^{\ast}_{y} \beta^{\ast}_{\bot} {}^{-2} S \\
+\mp c_{s} \alpha_{s}
+\beta^{\ast}_{z} \beta^{\ast}_{\bot} {}^{-2} S \\
+\displaystyle
+\biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta_y^{\ast}
+\beta^{\ast}_{\bot} {}^{-2} \\
+\displaystyle
+\biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{s} \beta_z^{\ast}
+\beta^{\ast}_{\bot} {}^{-2} \\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+\begin{equation}
+\displaystyle
+l_{f1} = \alpha_{f} ( 
+\mp \widetilde{v}_{x} c_{f} + c_{f}^2 )
+ \pm c_{s} \alpha_{s} \beta^{\ast}_{\bot} {}^{-2} S 
+(\widetilde{v}_{y} \beta_{y}^{\ast} + \widetilde{v}_{z} \beta_{z}^{\ast})
+- \frac1{(4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B} {}^{\ast}_{\bot} | a \alpha_{s} \nonumber
+\end{equation}
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{s} =
+\left[
+\begin{array}{c}
+\alpha_{s} \\
+\alpha_{s} ( \widetilde{v}_{x} \pm c_{s} ) \\
+\widetilde{v}_{y} \alpha_{s} \pm c_{f} \alpha_{f} \beta^{\ast}_{y} S  \\
+\widetilde{v}_{z} \alpha_{s} \pm c_{f} \alpha_{f} \beta^{\ast}_{z} S  \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta^{\ast}_{y} \vspace{-6pt} \\
+\displaystyle
+- \biggl( \frac{4 \pi}{\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta^{\ast}_{z} \vspace{-6pt} \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{s}^{\rm T} =
+\frac{1}{2 a^2}
+\left[
+\begin{array}{c}
+l_{s1} \\
+\displaystyle
+\pm c_s \alpha_s \\
+\pm c_{f} \alpha_{f}
+\beta^{\ast}_{y} \beta^{\ast}_{\bot} {}^{-2} S \\
+\pm c_{f} \alpha_{f}
+\beta^{\ast}_{z} \beta^{\ast}_{\bot} {}^{-2} S \\
+\displaystyle
+- \biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta_y^{\ast}
+\beta^{\ast}_{\bot} {}^{-2} \\
+\displaystyle
+- \biggl( \frac1{4 \pi} {\underwidetilde{\rho}} \biggr)^{1/2}
+a \alpha_{f} \beta_z^{\ast}
+\beta^{\ast}_{\bot} {}^{-2} \\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+\begin{equation}
+\displaystyle
+l_{s1} = \alpha_{s} ( \mp \widetilde{v}_{x} c_{s} + c_{s}^2 )
+\mp c_{f} \alpha_{f} \beta^{\ast}_{\bot} {}^{-2} S 
+(\widetilde{v}_{y} \beta_{y}^{\ast} + \widetilde{v}_{z} \beta_{z}^{\ast})
++ \frac1{(4 \pi \underwidetilde{\rho})^{1/2}} 
+| \underwidetilde{B} {}^{\ast}_{\bot} | a \alpha_{f} \nonumber
+\end{equation}
+\end{center}
+
+\newpage
+
+\section{Eigenvectors for Adiabatic MHD (Primitive Variables)}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $u$} =
+\left[
+\begin{array}{c}
+\rho \\
+v_{x} \\
+v_{y} \\
+v_{z} \\
+P \\
+B_{y} \\
+B_{z} \\
+\end{array}
+\right], \;
+\renewcommand{\arraystretch}{1.5}
+A =
+\left[
+\begin{array}{ccccccc}
+v_x & \rho & 0 & 0 & 0 & 0 & 0 \\
+0 & v_x & 0 & 0 & 1/\rho & \displaystyle \frac{B_y}{4\pi\rho} & 
+\displaystyle \frac{B_z}{4\pi\rho} \\
+0 & 0 & v_x & 0 & 0 & \displaystyle - \frac{B_x}{4\pi\rho} & 0 \\
+0 & 0 & 0 & v_x & 0 & 0 & \displaystyle - \frac{B_x}{4\pi\rho} \\
+0 & \rho a^2 & 0 & 0 & v_x & 0 & 0 \\
+0 & B_y & -B_x & 0 & 0 & v_x & 0 \\
+0 & B_z & 0 & -B_x & 0 & 0 & v_x  \\
+\end{array}
+\right]$\end{center}
+
+
+\begin{equation}
+a^2 = \frac{\gamma P}{\rho}
+\end{equation}
+
+\begin{equation}
+\lambda_{a} = {v}_{x} \pm b_{x} , \; 
+\lambda_{f,s} = {v}_{x} \pm c_{f,s}
+\end{equation}
+
+\begin{equation}
+c_{f,s}^2 = \frac12 \left( a^{\ast 2} \pm \sqrt{a^{\ast 4} 
+- 4 a^2 b_x^2}\right)
+\end{equation}
+
+\begin{equation}
+b_{x}^2 = \frac{B_{x}^2}{4 \pi {\rho}}, \;
+a^{\ast 2} = a^2 + b^{2}, \;
+b^2 = \frac{B_{x}^2 + B_{y}^2 + B_{z}^2}{4 \pi {\rho}}
+\end{equation}
+
+\begin{equation}
+\beta_{y} = \frac{{B}{}_{y}}{|{B}{}_{\bot} |}
+, \;
+\beta_{z} = \frac{{B}{}_{z}}{|{B}{}_{\bot} |} , \;
+\beta_{\bot}^{2} = \beta_y^{2} + \beta_z^{2} , \;
+|{B}{}_{\bot} | = ( {B}{}_{y}^{2} +
+{B}{}_{z}^{2} ) ^{1/2}
+\end{equation}
+
+\begin{equation}
+S = {\rm sign} (B_{x})
+\end{equation}
+
+\begin{equation}
+\alpha_{f}^2 = \frac{a^2 - c_{s}^2}{c_{f}^2 - c_{s}^2}
+, \;
+\alpha_{s}^2 = \frac{c_{f}^2 - a^2}{c_{f}^2 - c_{s}^2}
+\end{equation}
+
+\newpage
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{e} =
+\left[
+\begin{array}{c}
+1 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{e}^{\rm T} =
+\frac{1}{a^2}
+\left[
+\begin{array}{c}
+a^2 \\
+0 \\
+0 \\
+0 \\
+-1 \\
+0 \\
+0 \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{a} =
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+0 \\
+- \sqrt{4\pi\rho}\beta_z S\\ 
+\sqrt{4\pi\rho}\beta_y S\\ 
+\end{array} 
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{a}^{\rm T} =
+\frac{1}{2}
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+0 \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}}\beta_z S \\ 
+\displaystyle \frac1{\sqrt{4\pi\rho}}\beta_y S \\ 
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{f} =
+\left[
+\begin{array}{c}
+\rho \alpha_{f} \\
+\pm c_{f} \alpha_{f} \\
+\mp c_{s} \alpha_{s} \beta_{y} S \\
+\mp c_{s} \alpha_{s} \beta_{z} S  \\
+\rho a^2 \alpha_{f} \\
+\sqrt{4\pi\rho} a \alpha_s \beta_y \\
+\sqrt{4\pi\rho} a \alpha_s \beta_z \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{f}^{\rm T} =
+\frac{1}{2 a^2}
+\left[
+\begin{array}{c}
+0 \\
+\pm c_{f} \alpha_{f} \\
+\mp c_{s} \alpha_{s} \beta_{y} S \\
+\mp c_{s} \alpha_{s} \beta_{z} S  \\
+\displaystyle \frac1{\rho} \alpha_{f} \\
+\displaystyle \frac1{\sqrt{4\pi\rho}} a \alpha_s \beta_y \\
+\displaystyle \frac1{\sqrt{4\pi\rho}} a \alpha_s \beta_z \\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{s} =
+\left[
+\begin{array}{c}
+\rho \alpha_{s} \\
+\pm c_{s} \alpha_{s} \\
+\pm c_{f} \alpha_{f} \beta_{y} S \\
+\pm c_{f} \alpha_{f} \beta_{z} S  \\
+\rho a^2 \alpha_{s} \\
+- \sqrt{4\pi\rho} a \alpha_f \beta_y \\
+- \sqrt{4\pi\rho} a \alpha_f \beta_z \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{s}^{\rm T} =
+\frac{1}{2 a^2}
+\left[
+\begin{array}{c}
+0 \\
+\pm c_{s} \alpha_{s} \\
+\pm c_{f} \alpha_{f} \beta_{y} S \\
+\pm c_{f} \alpha_{f} \beta_{z} S  \\
+\displaystyle \frac1{\rho} \alpha_{s} \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}} a \alpha_f \beta_y \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}} a \alpha_f \beta_z \\
+\end{array}
+\right]$ 
+\end{center}
+
+\newpage
+
+\section{Eigenvectors for Isothermal MHD (Primitive Variables)}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $u$} =
+\left[
+\begin{array}{c}
+\rho \\
+v_{x} \\
+v_{y} \\
+v_{z} \\
+B_{y} \\
+B_{z} \\
+\end{array}
+\right], \;
+\renewcommand{\arraystretch}{1.5}
+A =
+\left[
+\begin{array}{ccccccc}
+v_x & \rho & 0 & 0 & 0 & 0 \\
+0 & v_x & 0 & 1/\rho & \displaystyle \frac{B_y}{4\pi\rho} & 
+\displaystyle \frac{B_z}{4\pi\rho} \\
+0 & 0 & v_x & 0 & \displaystyle - \frac{B_x}{4\pi\rho} & 0 \\
+0 & 0 & 0 & v_x & 0 & \displaystyle - \frac{B_x}{4\pi\rho} \\
+0 & B_y & -B_x & 0 & v_x & 0 \\
+0 & B_z & 0 & -B_x & 0 & v_x  \\
+\end{array}
+\right]$\end{center}
+
+
+\begin{equation}
+P = a^2 \rho
+\end{equation}
+
+\begin{equation}
+\lambda_{e} = {v}_{x}, \; 
+\lambda_{a} = {v}_{x} \pm b_{x} , \; 
+\lambda_{f,s} = {v}_{x} \pm c_{f,s}
+\end{equation}
+
+\begin{equation}
+c_{f,s}^2 = \frac12 \left( a^{\ast 2} \pm \sqrt{a^{\ast 4} 
+- 4 a^2 b_x^2}\right)
+\end{equation}
+
+\begin{equation}
+b_{x}^2 = \frac{B_{x}^2}{4 \pi {\rho}}, \;
+a^{\ast 2} = a^2 + b^{2}, \;
+b^2 = \frac{B_{x}^2 + B_{y}^2 + B_{z}^2}{4 \pi {\rho}}
+\end{equation}
+
+\begin{equation}
+\beta_{y} = \frac{{B}{}_{y}}{|{B}{}_{\bot} |}
+, \;
+\beta_{z} = \frac{{B}{}_{z}}{|{B}{}_{\bot} |} , \;
+\beta_{\bot}^{2} = \beta_y^{2} + \beta_z^{2} , \;
+|{B}{}_{\bot} | = ( {B}{}_{y}^{2} +
+{B}{}_{z}^{2} ) ^{1/2}
+\end{equation}
+
+\begin{equation}
+S = {\rm sign} (B_{x})
+\end{equation}
+
+\begin{equation}
+\alpha_{f}^2 = \frac{a^2 - c_{s}^2}{c_{f}^2 - c_{s}^2}
+, \;
+\alpha_{s}^2 = \frac{c_{f}^2 - a^2}{c_{f}^2 - c_{s}^2}
+\end{equation}
+
+\newpage
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{a} =
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+- \sqrt{4\pi\rho}\beta_z S\\ 
+\sqrt{4\pi\rho}\beta_y S\\ 
+\end{array} 
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{a}^{\rm T} =
+\frac{1}{2}
+\left[
+\begin{array}{c}
+0 \\
+0 \\
+\pm \beta_{z} \\
+\mp \beta_{y} \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}}\beta_z S \\ 
+\displaystyle \frac1{\sqrt{4\pi\rho}}\beta_y S \\ 
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{f} =
+\left[
+\begin{array}{c}
+\rho \alpha_{f} \\
+\pm c_{f} \alpha_{f} \\
+\mp c_{s} \alpha_{s} \beta_{y} S \\
+\mp c_{s} \alpha_{s} \beta_{z} S  \\
+\sqrt{4\pi\rho} a \alpha_s \beta_y \\
+\sqrt{4\pi\rho} a \alpha_s \beta_z \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{f}^{\rm T} =
+\frac{1}{a^2 ( 1 + \alpha_s^2 )}
+\left[
+\begin{array}{c}
+0 \\
+\pm c_{f} \alpha_{f} \\
+\mp c_{s} \alpha_{s} \beta_{y} S \\
+\mp c_{s} \alpha_{s} \beta_{z} S  \\
+\displaystyle \frac1{\sqrt{4\pi\rho}} a \alpha_s \beta_y \\
+\displaystyle \frac1{\sqrt{4\pi\rho}} a \alpha_s \beta_z \\
+\end{array}
+\right]$ 
+\end{center}
+
+\begin{center}
+$\renewcommand{\arraystretch}{1.5}
+\mbox{\boldmath $r$}_{s} =
+\left[
+\begin{array}{c}
+\rho \alpha_{s} \\
+\pm c_{s} \alpha_{s} \\
+\pm c_{f} \alpha_{f} \beta_{y} S \\
+\pm c_{f} \alpha_{f} \beta_{z} S  \\
+- \sqrt{4\pi\rho} a \alpha_f \beta_y \\
+- \sqrt{4\pi\rho} a \alpha_f \beta_z \\
+\end{array}
+\right]$, $\;$
+$\renewcommand{\arraystretch}{1.5}
+\displaystyle
+\mbox{\boldmath $l$}_{s}^{\rm T} =
+\frac{1}{a^2 ( 1 + \alpha_f^2 )}
+\left[
+\begin{array}{c}
+0 \\
+\pm c_{s} \alpha_{s} \\
+\pm c_{f} \alpha_{f} \beta_{y} S \\
+\pm c_{f} \alpha_{f} \beta_{z} S  \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}} a \alpha_f \beta_y \\
+\displaystyle - \frac1{\sqrt{4\pi\rho}} a \alpha_f \beta_z \\
+\end{array}
+\right]$ 
+\end{center}
+
+\end{document}
+
