@@ -14,8 +14,16 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
 /*                                                                            */
 /*============================================================================*/
   char buf[120];
+#ifdef ONE_D
   int i=0;
   int is,ie;
+#elif defined TWO_D
+  int i,j;
+  int is1,ie1,is2,ie2;
+#else /* THREE_D */
+  int i,j,k;
+  int is1,ie1,is2,ie2,is3,ie3;
+#endif
   Real dl,pl,ul,vl,wl,dr,pr,ur,vr,wr;
 #ifdef MHD
   Real bxl,byl,bzl,bxr,byr,bzr;
@@ -88,6 +96,7 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
 
 /* setup dependent variables for shocktube in X-direction */
 
+#ifdef ONE_D
    is = agrid->is; ie = agrid->ie;
 
    for (i=is-2; i<=is+((ie-is+1)/2)-1; i++) {
@@ -128,4 +137,57 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
        + 0.5*dr*(ur*ur + vr*vr + wr*wr);
 #endif
    }
+
+#elif defined TWO_D
+   is1 = agrid->is1;  ie1 = agrid->ie1;
+   is2 = agrid->is2;  ie2 = agrid->ie2;
+
+   for(i=is1-2; i<=is1+((ie1-is1+1)/2)-1; i++){
+     for(j=is2-2; j<=ie2+2; j++){
+       agrid->u[i][j][0] = dl;
+       agrid->u[i][j][1] = ul*dl;
+       agrid->u[i][j][2] = vl*dl;
+       agrid->u[i][j][3] = wl*dl;
+#ifdef MHD
+       agrid->bx[i][j] = bxl;
+       agrid->by[i][j] = byl;
+       agrid->u[i][j][NVAR-3] = bxl;
+       agrid->u[i][j][NVAR-2] = byl;
+       agrid->u[i][j][NVAR-1] = bzl;
+#endif
+#ifdef ADIABATIC
+       agrid->u[i][j][4] = pl/GAMM1 
+#ifdef MHD
+	 + 0.5*(bxl*bxl + byl*byl + bzl*bzl)
+#endif
+	 + 0.5*dl*(ul*ul + vl*vl + wl*wl);
+#endif
+     }
+   }
+   for(i=is1+((ie1-is1+1)/2); i<=ie1+2; i++){
+     for(j=is2-2; j<=ie2+2; j++){
+       agrid->u[i][j][0] = dr;
+       agrid->u[i][j][1] = ur*dr;
+       agrid->u[i][j][2] = vr*dr;
+       agrid->u[i][j][3] = wr*dr;
+#ifdef MHD
+       agrid->bx[i][j] = bxr;
+       agrid->by[i][j] = byr;
+       agrid->u[i][j][NVAR-3] = bxr;
+       agrid->u[i][j][NVAR-2] = byr;
+       agrid->u[i][j][NVAR-1] = bzr;
+#endif
+#ifdef ADIABATIC
+       agrid->u[i][j][4] = pr/GAMM1
+#ifdef MHD
+	 + 0.5*(bxr*bxr + byr*byr + bzr*bzr) 
+#endif
+	 + 0.5*dr*(ur*ur + vr*vr + wr*wr);
+#endif
+     }
+   }
+
+#else /* THREE_D */
+#error : 3D shkset not yet implemented.
+#endif
 }
