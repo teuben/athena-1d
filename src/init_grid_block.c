@@ -17,9 +17,9 @@ void init_grid_block(FILE *p_input_file, FILE *p_output_file,
 /*                                                                            */
 /*============================================================================*/
   int i=0,nxzones;
-  REAL xmin,xmax;
-  REAL diib,sxiib,syiib,sziib,eiib,bxiib,byiib,bziib;
-  REAL doib,sxoib,syoib,szoib,eoib,bxoib,byoib,bzoib;
+  Real xmin,xmax;
+  Real diib,sxiib,syiib,sziib,eiib,bxiib,byiib,bziib;
+  Real doib,sxoib,syoib,szoib,eoib,bxoib,byoib,bzoib;
   char buf[120];
 /*============================================================================*/
 /* Initialize grid */

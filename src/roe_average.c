@@ -20,11 +20,11 @@
 #include "athena.h"
 #include "prototypes.h"
 
-void roe_average(REAL wl[NVAR], REAL wr[NVAR], REAL b1, REAL droe,
-		 REAL v1roe, REAL v2roe, REAL v3roe, REAL hroe, REAL b2roe, REAL b3roe,
-		 REAL x, REAL y, REAL pbl, REAL pbr, REAL el, REAL er)
+void roe_average(Real wl[NVAR], Real wr[NVAR], Real b1, Real droe,
+		 Real v1roe, Real v2roe, Real v3roe, Real hroe, Real b2roe, Real b3roe,
+		 Real x, Real y, Real pbl, Real pbr, Real el, Real er)
 {
-  REAL sqrtdl,sqrtdr,sdlpdr;
+  Real sqrtdl,sqrtdr,sdlpdr;
 
    sqrtdl = sqrt(wl[0]);
    sqrtdr = sqrt(wr[0]);

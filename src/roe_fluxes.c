@@ -27,16 +27,16 @@
 #include "athena.h"
 #include "prototypes.h"
 
-REAL roe_fluxes(REAL wl[NXMAX][NVAR], REAL wr[NXMAX][NVAR],
-   REAL b1[NXMAX+1], int ibegin, int iend, REAL f[NXMAX][NVAR])
+Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
+   Real b1[NXMAX+1], int ibegin, int iend, Real f[NXMAX][NVAR])
 {
-  REAL sqrtdl,sqrtdr,sdlpdr;
-  REAL droe,v1roe,v2roe,v3roe,b2roe,b3roe,hroe,x,y,pbl=0.0,pbr=0.0,el,er;
-  REAL ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],maxevroe=0.0;
-  REAL ul[NVAR],ur[NVAR],du[NVAR],a[NVAR],u_inter[NVAR],p_inter=0.0;
-  REAL fl[NVAR],fr[NVAR];
+  Real sqrtdl,sqrtdr,sdlpdr;
+  Real droe,v1roe,v2roe,v3roe,b2roe,b3roe,hroe,x,y,pbl=0.0,pbr=0.0,el,er;
+  Real ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],maxevroe=0.0;
+  Real ul[NVAR],ur[NVAR],du[NVAR],a[NVAR],u_inter[NVAR],p_inter=0.0;
+  Real fl[NVAR],fr[NVAR];
   int i,n,m,hlle_flag;
-  REAL asq,vaxsq=0.0,qsq,cfsq,cfl,cfr,bp,bm;
+  Real asq,vaxsq=0.0,qsq,cfsq,cfl,cfr,bp,bm;
 
    for (n=0; n<NVAR; n++) {
    for (m=0; m<NVAR; m++) {

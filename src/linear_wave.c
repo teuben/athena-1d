@@ -8,7 +8,7 @@
 #include "athena.h"
 #include "prototypes.h"
 
-REAL u0,amp;
+Real u0,amp;
 int wave_flag;
 
 void linear_wave(FILE *p_input_file, struct grid_block *agrid)
@@ -19,8 +19,8 @@ void linear_wave(FILE *p_input_file, struct grid_block *agrid)
 char buf[120];
 int i=0;
 int is,ie,n,m;
-REAL d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
-REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
+Real d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
+Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
 /*============================================================================*/
 
 /* Read initial conditions */
@@ -92,7 +92,7 @@ REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
 }
 
 
-REAL linear_wave_error(struct grid_block *agrid)
+Real linear_wave_error(struct grid_block *agrid)
 {
 /* Computes L1-error in linear waves, ASSUMING WAVE HAS PROPAGATED AN INTEGER 
  * NUMBER OF PERIODS
@@ -100,8 +100,8 @@ REAL linear_wave_error(struct grid_block *agrid)
  *============================================================================*/
   int i=0;
   int is,ie,n,m;
-  REAL d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
-  REAL x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],error[NVAR];
+  Real d0,p0,v0,w0,bx0,by0,bz0,h0,xfact,yfact;
+  Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],error[NVAR];
 /*============================================================================*/
 
   printf("amp=%e, u0=%e, flag=%i\n",amp,u0,wave_flag);

@@ -16,12 +16,13 @@
 #include <stdio.h>
 #include "athena.def"
 #include "athena.h"
+
 void printd(struct grid_block *agrid)
 {
 #define NSCAL 10
-int is,ie,i=0;
-REAL dvol, scal[NSCAL];
-FILE *p_hstfile;
+  int is,ie,i=0;
+  Real dvol, scal[NSCAL];
+  FILE *p_hstfile;
 
    is = agrid->is;
    ie = agrid->ie;
@@ -61,3 +62,4 @@ FILE *p_hstfile;
    fprintf(p_hstfile,"\n");
    fclose(p_hstfile);
 }
+#undef NSCAL

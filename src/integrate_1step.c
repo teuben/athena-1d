@@ -21,10 +21,10 @@
 void integrate_1step(struct grid_block *agrid)
 {
   int i=0,n,is,ie;
-  REAL dtodx;
-  REAL maxev_lr,maxev_roe,maxev_xswp=0.0,min_dtx=1.0e37;
-  REAL u[NXMAX][NVAR],wl[NXMAX][NVAR],wr[NXMAX][NVAR],f_u[NXMAX][NVAR];
-  REAL b_par[NXMAX+1];
+  Real dtodx;
+  Real maxev_lr,maxev_roe,maxev_xswp=0.0,min_dtx=1.0e37;
+  Real u[NXMAX][NVAR],wl[NXMAX][NVAR],wr[NXMAX][NVAR],f_u[NXMAX][NVAR];
+  Real b_par[NXMAX+1];
 
    is = agrid->is;
    ie = agrid->ie;

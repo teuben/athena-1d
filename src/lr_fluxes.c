@@ -20,8 +20,8 @@
 #include "athena.h"
 #include "prototypes.h"
 
-void lr_fluxes(REAL ul[NVAR], REAL ur[NVAR], REAL wl[NVAR], REAL wr[NVAR],
-   REAL b1, REAL pbl, REAL pbr, REAL fl[NVAR], REAL fr[NVAR])
+void lr_fluxes(Real ul[NVAR], Real ur[NVAR], Real wl[NVAR], Real wr[NVAR],
+   Real b1, Real pbl, Real pbr, Real fl[NVAR], Real fr[NVAR])
 {
    
    fl[0] = ul[1];

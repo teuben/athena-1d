@@ -25,20 +25,20 @@
 #include "athena.h"
 #include "prototypes.h"
 
-REAL lr_states(REAL u[NXMAX][NVAR], REAL b1[NXMAX+1], REAL dtodx,
-   int ib, int ie, REAL wl[NXMAX][NVAR], REAL wr[NXMAX][NVAR])
+Real lr_states(Real u[NXMAX][NVAR], Real b1[NXMAX+1], Real dtodx,
+   int ib, int ie, Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR])
 {
   int i,n,m;
-  REAL w[NXMAX][NVAR],pb=0.0,ke;
-  REAL ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],b1c=0.0,maxevlr=0.0;
-  REAL ev_ip1[NVAR],rem_ip1[NVAR][NVAR],lem_ip1[NVAR][NVAR];
-  REAL dwc[NVAR],dwl[NVAR],dwr[NVAR],dwg[NVAR],dwm[NXMAX][NVAR];
-  REAL dac[NVAR],dal[NVAR],dar[NVAR],dag[NVAR],da[NVAR];
+  Real w[NXMAX][NVAR],pb=0.0,ke;
+  Real ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],b1c=0.0,maxevlr=0.0;
+  Real ev_ip1[NVAR],rem_ip1[NVAR][NVAR],lem_ip1[NVAR][NVAR];
+  Real dwc[NVAR],dwl[NVAR],dwr[NVAR],dwg[NVAR],dwm[NXMAX][NVAR];
+  Real dac[NVAR],dal[NVAR],dar[NVAR],dag[NVAR],da[NVAR];
 #ifdef THIRD_ORDER
-  REAL wim1h[NXMAX][NVAR];
+  Real wim1h[NXMAX][NVAR];
 #endif
-  REAL wlv[NVAR],wrv[NVAR],dw[NVAR],w6[NVAR];
-  REAL qa,qd,qe,qx;
+  Real wlv[NVAR],wrv[NVAR],dw[NVAR],w6[NVAR];
+  Real qa,qd,qe,qx;
 
    for (n=0; n<NVAR; n++) {
    for (m=0; m<NVAR; m++) {

@@ -16,7 +16,7 @@ void main(void)
   static struct grid_block grid_level0;
   static struct bval_array bval_level0;
   int ires,nlim;
-  REAL t_res,dt_res,tlim,cpu_time,zcs;
+  Real t_res,dt_res,tlim,cpu_time,zcs;
   char buf[120],id[3],res_file[9];
   FILE *p_input_file,*p_output_file;
   clock_t time0,time1;

@@ -8,10 +8,10 @@
 #include "athena.def"
 #include "athena.h"
 
-REAL init_dt(struct grid_block *agrid)
+Real init_dt(struct grid_block *agrid)
 {
   int i;
-  REAL d,v1,v2,v3,vmax,b1,b2,b3,bsq,va,qsq,p,cs,cmax=0.0,dt;
+  Real d,v1,v2,v3,vmax,b1,b2,b3,bsq,va,qsq,p,cs,cmax=0.0,dt;
 
   for (i=agrid->is; i<=agrid->ie; i++) {
     d = agrid->u[i][0];

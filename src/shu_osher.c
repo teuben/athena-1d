@@ -15,7 +15,7 @@ void shu_osher(FILE *p_input_file, struct grid_block *agrid)
 /*============================================================================*/
   int i=0;
   int is,ie;
-  REAL dl,pl,ul,vl,wl,x[NX1];
+  Real dl,pl,ul,vl,wl,x[NX1];
 /*============================================================================*/
 
    is = agrid->is; ie = agrid->ie;

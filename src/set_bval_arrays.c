@@ -9,7 +9,7 @@
 void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 {
   int i=0,n,ii,is,ie;
-  REAL reflect_s;
+  Real reflect_s;
 
   is = agrid->is; ie = agrid->ie;
 
