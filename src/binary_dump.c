@@ -46,9 +46,9 @@ static void write_dx_header(const struct grid_block *agrid){
     {"Mass Density",
      "1-Momentum",
      "2-Momentum",
-     "3-Momentum",
+     "3-Momentum"
 #ifdef ADIABATIC
-     "Energy Density"
+     ,"Energy Density"
 #endif
 #ifdef MHD
      ,"1-Field","2-Field","3-Field","1-Interface-Field"
