@@ -12,7 +12,7 @@
 void linear_wave_error(struct grid_block *agrid);
 /*********************/
 
-int main(void)
+int main(int argc, char *argv[])
 {
 /* Temporary driver program to test Roe's method.                             */
 /*                                                                            */
@@ -26,13 +26,22 @@ int main(void)
   clock_t time0,time1;
   time_t start;
 /*============================================================================*/
+/* Parse command line options:                                                */
+  if (argc > 1) {
+    printf("Warning: Options not processed in %s yet\n",argv[0]);
+    printf("Inputfile needs to be called \"athinput\", output will be \"athoutput\"\n");
+    
+  }
+/*============================================================================*/
+
+/*============================================================================*/
 /* Open and read job control parameters from lines 1-6 of 'athinput' */
 
   if((p_input_file = fopen("athinput", "r")) == NULL){
     fprintf(stderr,"[main]: Unable to open \"athinput\" file\n");
     exit(EXIT_FAILURE);
   }
-  if((p_output_file = fopen("athoutput", "wb")) == NULL){
+  if((p_output_file = fopen("athoutput", "w")) == NULL){
     fprintf(stderr,"[main]: Unable to open \"athoutput\" file\n");
     fclose(p_input_file);
     exit(EXIT_FAILURE);
