@@ -17,7 +17,7 @@
 
 #ifdef MHD
 #define NUM_ARRAY (NVAR + 1)
-#else
+#else */
 #define NUM_ARRAY (NVAR)
 #endif
 
@@ -36,14 +36,16 @@ static void write_dx_header(const struct grid_block *agrid){
   char FileName[20]; /* Assume 20 char. is sufficient */
   FILE *pfile; /* Pointer to file. */
   int nzones;
-  char array_name[][15] = 
+  char array_name[][18] = 
     {"Mass Density",
      "1-Momentum",
      "2-Momentum",
      "3-Momentum",
+#ifdef ADIABATIC
      "Energy Density"
+#endif
 #ifdef MHD
-     ,"1-Field","2-Field","3-Field"
+     ,"1-Field","2-Field","3-Field","1-Interface-Field"
 #endif
     };
 
@@ -67,12 +69,17 @@ static void write_dx_header(const struct grid_block *agrid){
     fprintf(pfile,"data mode lsb binary\n\n");
   }
 
-  fprintf(pfile,"# object 1 is the regular positions\n");
+  fprintf(pfile,"# object 1 is the cell center positions\n");
   fprintf(pfile,"object 1 class gridpositions counts %d\n",nzones);
   fprintf(pfile,"origin %g\n",0.5*agrid->dx);
   fprintf(pfile,"delta  %g\n\n",agrid->dx);
 
-  fprintf(pfile,"# objects 2 on are the data, which ");
+  fprintf(pfile,"# object 2 is the cell interface positions\n");
+  fprintf(pfile,"object 2 class gridpositions counts %d\n",nzones+1);
+  fprintf(pfile,"origin %g\n",0.0);
+  fprintf(pfile,"delta  %g\n\n",agrid->dx);
+
+  fprintf(pfile,"# objects 3 on are the data, which ");
   fprintf(pfile,"are in a one-to-one correspondence\n");
   fprintf(pfile,"# with the positions (\"dep\" on positions).\n\n");
 
@@ -83,7 +90,7 @@ static void write_dx_header(const struct grid_block *agrid){
     offset += nzones*sizeof(float);
     fprintf(pfile,"# %s\n",array_name[n]);
     fprintf(pfile,"object %d class array type float rank 0 items %d\n",
-	    n+2,nzones);
+	    n+3,(n == (NUM_ARRAY - 1) ? nzones + 1 : nzones));
     fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
     fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
   }
@@ -94,8 +101,9 @@ static void write_dx_header(const struct grid_block *agrid){
 
   for(n=0;n<NUM_ARRAY;n++){
     fprintf(pfile,"object \"%s\" class field\n",array_name[n]);
-    fprintf(pfile,"component \"positions\" value 1\n");
-    fprintf(pfile,"component \"data\" value %d\n\n",n+2);
+    fprintf(pfile,"component \"positions\" value %d\n",
+	    (n == (NUM_ARRAY - 1) ? 2 : 1));
+    fprintf(pfile,"component \"data\" value %d\n\n",n+3);
   }
 
   for(n=0;n<72;n++) fputc((int)'#',pfile);
