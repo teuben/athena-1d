@@ -88,39 +88,41 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
    is = agrid->is; ie = agrid->ie;
 
    for (i=is-2; i<=is+((ie-is+1)/2)-1; i++) {
-      agrid->u[i][0] = dl;
-      agrid->u[i][1] = ul*dl;
-      agrid->u[i][2] = vl*dl;
-      agrid->u[i][3] = wl*dl;
+     agrid->u[i][0] = dl;
+     agrid->u[i][1] = ul*dl;
+     agrid->u[i][2] = vl*dl;
+     agrid->u[i][3] = wl*dl;
 #ifdef MHD
-      agrid->bx[i] = bxl;
-      agrid->u[i][NVAR-2] = byl;
-      agrid->u[i][NVAR-1] = bzl;
+     agrid->bx[i] = bxl;
+     agrid->u[i][NVAR-3] = bxl;
+     agrid->u[i][NVAR-2] = byl;
+     agrid->u[i][NVAR-1] = bzl;
 #endif
 #ifdef ADIABATIC
-      agrid->u[i][4] = pl/GAMM1 
+     agrid->u[i][4] = pl/GAMM1 
 #ifdef MHD
-        + 0.5*(bxl*bxl + byl*byl + bzl*bzl)
+       + 0.5*(bxl*bxl + byl*byl + bzl*bzl)
 #endif
-        + 0.5*dl*(ul*ul + vl*vl + wl*wl);
+       + 0.5*dl*(ul*ul + vl*vl + wl*wl);
 #endif
    }
    for (i=is+((ie-is+1)/2); i<=ie+2; i++) {
-      agrid->u[i][0] = dr;
-      agrid->u[i][1] = ur*dr;
-      agrid->u[i][2] = vr*dr;
-      agrid->u[i][3] = wr*dr;
+     agrid->u[i][0] = dr;
+     agrid->u[i][1] = ur*dr;
+     agrid->u[i][2] = vr*dr;
+     agrid->u[i][3] = wr*dr;
 #ifdef MHD
-      agrid->bx[i] = bxr;
-      agrid->u[i][NVAR-2] = byr;
-      agrid->u[i][NVAR-1] = bzr;
+     agrid->bx[i] = bxr;
+     agrid->u[i][NVAR-3] = bxr;
+     agrid->u[i][NVAR-2] = byr;
+     agrid->u[i][NVAR-1] = bzr;
 #endif
 #ifdef ADIABATIC
-      agrid->u[i][4] = pr/GAMM1
+     agrid->u[i][4] = pr/GAMM1
 #ifdef MHD
-        + 0.5*(bxr*bxr + byr*byr + bzr*bzr) 
+       + 0.5*(bxr*bxr + byr*byr + bzr*bzr) 
 #endif
-        + 0.5*dr*(ur*ur + vr*vr + wr*wr);
+       + 0.5*dr*(ur*ur + vr*vr + wr*wr);
 #endif
-      }
+   }
 }
