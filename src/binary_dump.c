@@ -182,7 +182,7 @@ void binary_dump(struct grid_block *agrid)
 
 #ifdef MHD
   /* Write out the interface magnetic fields */
-  for (i=0;i<=ndata[0]; i++) {data[i] = (float)agrid->bx[i+is-1];}
+  for (i=0;i<=ndata[0]; i++) {data[i] = (float)agrid->bx[i+is];}
   fwrite(data,sizeof(float),1+ndata[0],p_binfile);
 #endif
 
