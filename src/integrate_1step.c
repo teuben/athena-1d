@@ -143,7 +143,7 @@ void integrate_1step(Grid_Block *agrid){
 
     maxev_lr  = lr_states(u,b_par,dtody,is2,ie2,wl,wr);
     maxev_roe = roe_fluxes(wl,wr,b_par,is2,ie2,f2_u[i]);
-    maxev_xswp = MAX(maxev_xswp,(MAX(maxev_lr,maxev_roe)));
+    maxev_yswp = MAX(maxev_yswp,(MAX(maxev_lr,maxev_roe)));
 
     /* Permute the fluxes back to the natural order */
     /* After Perm. f2_u(d, Sx, Sy, Sz, E, Bx, Bz) */
