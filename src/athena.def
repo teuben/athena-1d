@@ -40,16 +40,16 @@
 /* computed macros based on above choices (never modified) */
 
 #if defined(ISOTHERMAL) AND defined(HYDRO)
- enum {NVAR = 4};
+ enum {NWAVE = 4, NVAR = 4};
 #endif
 #if defined(ISOTHERMAL) AND defined(MHD)
- enum {NVAR = 6};
+ enum {NWAVE = 6, NVAR = 7};
 #endif
 #if defined(ADIABATIC) AND defined(HYDRO)
- enum {NVAR = 5};
+ enum {NWAVE = 5, NVAR = 5};
 #endif
 #if defined(ADIABATIC) AND defined(MHD)
- enum {NVAR = 7};
+ enum {NWAVE = 7, NVAR = 8};
 #endif
 
 #define GAMM1 (GAMMA - 1.0)
