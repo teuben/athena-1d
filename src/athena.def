@@ -58,6 +58,7 @@
 #define GAMM1 (GAMMA - 1.0)
 #define GAMM2 (GAMMA - 2.0)
 #define ISOTHERMAL_C_SQ (ISOTHERMAL_C)*(ISOTHERMAL_C)
-#define NXMAX NX1
+
+enum {NXMAX = NX1, NYMAX = NX2, NZMAX = NX3};
 
 #endif /* ATHENA_DEFINES_H */
