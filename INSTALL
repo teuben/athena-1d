@@ -1,0 +1,31 @@
+We now use the GNU autoconf package to configure and install ATHENA.  (oct 2002)
+
+Detailed instructions and configuration options can be found in ....  (to do ...)
+
+In short, configuration is done with:
+
+	./configure [optional configuration options]
+
+		
+The most important configuration options ones are:
+
+		--help				give lots of help
+		--dim=N				N=1,2,3    [default: 1]
+		--without-dx			without support for dx
+
+And options we're thinking about:
+
+		--with-hdf4=/usr/local/hdf4
+		--with-hdf5=/usr/local/hdf5
+		--enable-swig
+
+
+After this, type
+
+	make
+
+to compile the source code, and install the executables in the bin directory
+
+	make test
+
+to run a number of tests appropriate for this dimensionality.
