@@ -1,23 +1,28 @@
 We now use the GNU autoconf package to configure and install ATHENA.  (oct 2002)
 
-Detailed instructions and configuration options can be found in ....  (to do ...)
+Detailed instructions and configuration options can be found in ....
 
 In short, configuration is done with:
 
+	cd src
 	./configure [optional configuration options]
 
 		
 The most important configuration options ones are:
 
 		--help				give lots of help
-		--dim=N				N=1,2,3    [default: 1]
-		--without-dx			without support for dx
+		--enable-single			default is double
+		--with-dim=N			N=1,2,3    [default: 1]
+		--with-eos=adiabatic		isothermal
+		--with-gas=mhd			hydro
 
 And options we're thinking about:
 
 		--with-hdf4=/usr/local/hdf4
 		--with-hdf5=/usr/local/hdf5
 		--enable-swig
+		--enable-pgplot
+		--enable-dx
 
 
 After this, type
@@ -25,7 +30,3 @@ After this, type
 	make
 
 to compile the source code, and install the executables in the bin directory
-
-	make test
-
-to run a number of tests appropriate for this dimensionality.
