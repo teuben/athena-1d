@@ -4,7 +4,7 @@
  * right-eigenvectors of "Roe's matrix A" for the linearized system in the 
  * CONSERVED variables, i.e. U,t = AU,x, where U=(d,d*vx,d*vy,d*vz,[E],[By,Bz]).
  * The eigenvalues are returned through the argument list as a vector of length
- * NVAR.  The eigenvectors are returned as matrices of size (NVAR)x(NVAR), with
+ * NWAVE.  The eigenvectors are returned as matrices of size (NWAVE)x(NWAVE), with
  * right-eigenvectors stored as COLUMNS (so R_i = right_eigenmatrix[*][i]), and
  * left-eigenvectors stored as ROWS (so L_i = left_eigenmatrix[i][*]).
  *
@@ -24,11 +24,11 @@
  * Input Arguments:
  *   v1,v2,v3 = Roe averaged components of velocity
  * Output Arguments:
- *   eigenvalues[NVAR],right_eigenmatrix[NVAR,NVAR],left_eigenmatrix[NVAR,NVAR]
+ *   eigenvalues[NWAVE],right_eigenmatrix[NWAVE,NWAVE],left_eigenmatrix[NWAVE,NWAVE]
  */
 void Eigensystem4_isothermal_hydro_InConsVars(Real v1, Real v2, Real v3,
-   Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
 
 /* Compute eigenvalues (eq. B5) */
@@ -88,12 +88,12 @@ void Eigensystem4_isothermal_hydro_InConsVars(Real v1, Real v2, Real v3,
 /*------------------------------- ADIABATIC HYDRO ------------------------------
  *
  * Input: v1,v2,v3,h = Roe averaged velocities and enthalpy
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_adiabatic_hydro_InConsVars(Real v1, Real v2, Real v3, Real h,
-   Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real vsq,asq,a,na,qa;
   vsq = v1*v1 + v2*v2 + v3*v3;
@@ -182,12 +182,12 @@ void Eigensystem4_adiabatic_hydro_InConsVars(Real v1, Real v2, Real v3, Real h,
  *
  * Input: d,v1,v2,v3,b1,b2,b3 = Roe averaged density, velocities, and B field
  *        x,y = numerical factors (eqs B15 and B16)
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_isothermal_mhd_InConsVars(Real d, Real v1, Real v2, Real v3,
-   Real b1, Real b2, Real b3, Real x, Real y, Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real b1, Real b2, Real b3, Real x, Real y, Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real btsq,bt_starsq,vaxsq,twid_csq,q_starsq,cfsq,cf,cssq,cs;
   Real bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,alpha_f,alpha_s;
@@ -373,13 +373,13 @@ void Eigensystem4_isothermal_mhd_InConsVars(Real d, Real v1, Real v2, Real v3,
  *
  * Input: d,v1,v2,v3,h,b1,b2,b3 = Roe averaged density, velocities, enthalpy, B
  *        x,y = numerical factors (see eqn XX)
- * Output: eigenvalues[NVAR]
- *         right_eigenmatrix[NVAR,NVAR], left_eigenmatrix[NVAR,NVAR];
+ * Output: eigenvalues[NWAVE]
+ *         right_eigenmatrix[NWAVE,NWAVE], left_eigenmatrix[NWAVE,NWAVE];
  */
 void Eigensystem4_adiabatic_mhd_InConsVars(Real d, Real v1, Real v2, Real v3,
    Real h, Real b1, Real b2, Real b3, Real x, Real y,
-   Real eigenvalues[NVAR],
-   Real right_eigenmatrix[NVAR][NVAR], Real left_eigenmatrix[NVAR][NVAR])
+   Real eigenvalues[NWAVE],
+   Real right_eigenmatrix[NWAVE][NWAVE], Real left_eigenmatrix[NWAVE][NWAVE])
 {
   Real vsq,btsq,bt_starsq,vaxsq,hp,twid_asq,q_starsq,cfsq,cf,cssq,cs;
   Real bt,bt_star,bet2,bet3,bet2_star,bet3_star,bet_starsq,vbet,alpha_f,alpha_s;
