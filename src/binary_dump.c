@@ -43,7 +43,7 @@ static void write_dx_header(const struct grid_block *agrid){
      "3-Momentum",
      "Energy Density"
 #ifdef MHD
-     ,"2-Field","3-Field","1-Field"
+     ,"1-Field","2-Field","3-Field"
 #endif
     };
 
@@ -137,9 +137,6 @@ void binary_dump(struct grid_block *agrid)
 
   ndata[0] = ie-is+1;
   ndata[1] = NVAR;
-#ifdef MHD
-  ndata[1] = NVAR + 1;
-#endif
   fwrite(ndata,sizeof(int),2,p_binfile);
 
   /* Write (gamma-1) and isothermal sound speed */
@@ -150,7 +147,7 @@ void binary_dump(struct grid_block *agrid)
 
   /* Write grid */
 
-  if((xgrid = (float *)malloc(ndata[0]*sizeof(float))) == NULL){
+  if((xgrid = (float *)malloc((1+ndata[0])*sizeof(float))) == NULL){
     fprintf(stderr,"[binary_dump]: Unable to malloc memory to write binary file %s\n",agrid->bin_file);
     fclose(p_binfile);
     add1_2name(agrid->bin_file);
@@ -170,8 +167,9 @@ void binary_dump(struct grid_block *agrid)
   }
 
 #ifdef MHD
-  for (i=0;i<ndata[0]; i++) {data[i] = (float)agrid->bx[i+is];}
-  fwrite(data,sizeof(float),ndata[0],p_binfile);
+  /* Write out the interface magnetic fields */
+  for (i=0;i<=ndata[0]; i++) {data[i] = (float)agrid->bx[i+is-1];}
+  fwrite(data,sizeof(float),1+ndata[0],p_binfile);
 #endif
 
   /* Close dump file, increment filename */
