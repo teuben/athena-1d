@@ -21,8 +21,6 @@
 
 #ifdef WRITE_DX_HEADER
 
-#error : The write_dx_header() function is not yet implemented for 2D.
-
 #ifdef MHD
 #define NUM_ARRAY (NVAR + 1)
 #else
@@ -48,18 +46,20 @@ static void write_dx_header(const struct grid_block *agrid){
     {"Mass Density",
      "1-Momentum",
      "2-Momentum",
-     "3-Momentum",
+     "3-Momentum"
 #ifdef ADIABATIC
-     "Energy Density"
+     ,"Energy Density"
 #endif
 #ifdef MHD
      ,"1-Field","2-Field","3-Field","1-Interface-Field"
 #endif
     };
 
+  fprintf(stderr,"The write_dx_header() function is not yet properly implemented for 2D\n");
+
   strcpy(FileName,agrid->bin_file);/* Copy the Data Dump File Name */
   strcat(FileName,".dx"); /* Append ".dx" for the header name */
-  nzones = agrid->ie - agrid->is + 1;
+  nzones = agrid->ie1 - agrid->is1 + 1;
 
   /* Open the output file with the name "FileName" just constructed. */
   if ((pfile = fopen(FileName,"w")) == NULL) {
