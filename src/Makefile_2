@@ -1,1 +1,3 @@
+#   include "Makefile" for pure 2D problems
+
 DIM = 2

@@ -1,1 +1,3 @@
+#   include "Makefile" for pure 3D problems
+
 DIM = 3
