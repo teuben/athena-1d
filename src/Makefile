@@ -36,8 +36,14 @@ help:
 	@echo Type 'make compile' to generate ATHENA executable
 	@echo Type 'make clean'   to remove *.o files
 #-----------------------------------------------------------------------
+.PHONY: clean
 clean:
 	rm -f *.o Makedepend
+	touch Makedepend
+#-----------------------------------------------------------------------
+.PHONY: distclean
+distclean:
+	rm -f *.o *~ Makedepend
 	touch Makedepend
 #-----------------------------------------------------------------------
 compile: ${OBJ}
