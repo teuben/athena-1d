@@ -23,8 +23,8 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
     for (i=0;  i<=3;  i++) {
       for (n=0;  n<NVAR;  n++) {
 	bval->uiib[i][n] = agrid->boundary_values.uiib[i][n];
-	bval->bxiib[i] = agrid->boundary_values.bxiib[i];
       }
+      bval->bxiib[i] = agrid->boundary_values.bxiib[i];
     }
 
 /* Do niib=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
@@ -48,8 +48,8 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 	 if (agrid->niib == 4) {ii = ie-(3-i);} */
       for (n=0;  n<NVAR;  n++) {
 	bval->uiib[i][n] = agrid->u[ii][n];
-	bval->bxiib[i] = agrid->bx[ii];
       }
+      bval->bxiib[i] = agrid->bx[ii];
       bval->uiib[i][1] = agrid->u[ii][1]*reflect_s;
     }
   }
@@ -64,8 +64,8 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
     for (i=0;  i<=3;  i++) {
       for (n=0;  n<NVAR;  n++) {
 	bval->uoib[i][n] = agrid->boundary_values.uoib[i][n];
-	bval->bxoib[i] = agrid->boundary_values.bxoib[i];
       }
+      bval->bxoib[i] = agrid->boundary_values.bxoib[i];
     }
 
 /* Do noib=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
@@ -90,8 +90,8 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
 	 if (agrid->noib == 4) {ii = is+i;} */
       for (n=0;  n<NVAR;  n++) {
 	bval->uoib[i][n] = agrid->u[ii][n];
-	bval->bxoib[i] = agrid->bx[ii+1];
       }
+      bval->bxoib[i] = agrid->bx[ii+1];
       bval->uoib[i][1] = agrid->u[ii][1]*reflect_s;
     }
   }
