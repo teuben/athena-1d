@@ -1,9 +1,23 @@
+
+/*
+ *  defines :		Real		(float or double, probably only double works now)
+ *			Bval_Array
+ *			Grid_Block
+ */
+
 #ifndef ATHENA_H
 #define ATHENA_H 
 
 #include "athena.def"
 
-typedef double Real;
+#if defined(SINGLE_PREC)
+  typedef float  Real;
+#elif defined(DOUBLE_PREC)
+  typedef double Real;
+#else
+# error "Not a valid precision flag"
+#endif
+
 
 typedef struct bval_array{
 #if defined ONE_D
