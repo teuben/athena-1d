@@ -13,12 +13,6 @@
 #include "athena.h"
 #include "prototypes.h"
 
-#ifdef ONE_D
-/* Wrap the functions in an ifdef so that we can compile and link the
-   1D and 2D binary data dump files and only the appropriate one will
-   contribute code.  Ultimately this ought to be handled at the
-   configure step. */
-
 #ifdef WRITE_DX_HEADER
 
 #ifdef MHD
@@ -219,4 +213,3 @@ void binary_dump(struct grid_block *agrid)
   add1_2name(agrid->bin_file);
 }
 
-#endif /* ONE_D */
