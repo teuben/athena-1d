@@ -27,19 +27,19 @@
 #include "athena.h"
 #include "prototypes.h"
 
-Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
-   Real b1[NXMAX+1], int ibegin, int iend, Real f[NXMAX][NVAR])
+Real roe_fluxes(Real wl[NXMAX][NWAVE], Real wr[NXMAX][NWAVE],
+   Real b1[NXMAX], int ibegin, int iend, Real f[NXMAX][NWAVE])
 {
   Real sqrtdl,sqrtdr,sdlpdr;
   Real droe,v1roe,v2roe,v3roe,b2roe,b3roe,hroe,x,y,pbl=0.0,pbr=0.0,el,er;
-  Real ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR],maxevroe=0.0;
-  Real ul[NVAR],ur[NVAR],du[NVAR],a[NVAR],u_inter[NVAR],p_inter=0.0;
-  Real fl[NVAR],fr[NVAR];
+  Real ev[NWAVE],rem[NWAVE][NWAVE],lem[NWAVE][NWAVE],maxevroe=0.0;
+  Real ul[NWAVE],ur[NWAVE],du[NWAVE],a[NWAVE],u_inter[NWAVE],p_inter=0.0;
+  Real fl[NWAVE],fr[NWAVE];
   int i,n,m,hlle_flag;
   Real asq,vaxsq=0.0,qsq,cfsq,cfl,cfr,bp,bm;
 
-   for (n=0; n<NVAR; n++) {
-   for (m=0; m<NVAR; m++) {
+   for (n=0; n<NWAVE; n++) {
+   for (m=0; m<NWAVE; m++) {
       rem[n][m] = 0.0;
       lem[n][m] = 0.0;
    }}
@@ -64,12 +64,12 @@ Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
  * factors X and Y are needed to compute the eigenvectors (eqs. B15,B16)
  */
 #ifdef MHD
-      pbl = 0.5*(SQR(wl[i][NVAR-2]) + SQR(wl[i][NVAR-1]) + b1[i]*b1[i]);
-      pbr = 0.5*(SQR(wr[i][NVAR-2]) + SQR(wr[i][NVAR-1]) + b1[i]*b1[i]);
-      b2roe = (sqrtdr*wl[i][NVAR-2] + sqrtdl*wr[i][NVAR-2])/sdlpdr;
-      b3roe = (sqrtdr*wl[i][NVAR-1] + sqrtdl*wr[i][NVAR-1])/sdlpdr;
-      x = 0.5*((b2roe*b2roe - wl[i][NVAR-2]*wr[i][NVAR-2])
-              +(b3roe*b3roe - wl[i][NVAR-1]*wr[i][NVAR-1]))/droe;
+      pbl = 0.5*(SQR(wl[i][NWAVE-2]) + SQR(wl[i][NWAVE-1]) + b1[i]*b1[i]);
+      pbr = 0.5*(SQR(wr[i][NWAVE-2]) + SQR(wr[i][NWAVE-1]) + b1[i]*b1[i]);
+      b2roe = (sqrtdr*wl[i][NWAVE-2] + sqrtdl*wr[i][NWAVE-2])/sdlpdr;
+      b3roe = (sqrtdr*wl[i][NWAVE-1] + sqrtdl*wr[i][NWAVE-1])/sdlpdr;
+      x = 0.5*((b2roe*b2roe - wl[i][NWAVE-2]*wr[i][NWAVE-2])
+              +(b3roe*b3roe - wl[i][NWAVE-1]*wr[i][NWAVE-1]))/droe;
       y = 0.5*(wl[i][0] + wr[i][0])/droe;
 #endif
 #ifdef ADIABATIC
@@ -101,7 +101,7 @@ Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
       Eigensystem4_adiabatic_mhd_InConsVars(droe,v1roe,v2roe,v3roe,hroe,
 	 b1[i],b2roe,b3roe,x,y,ev,rem,lem);
 #endif
-      maxevroe = MAX(maxevroe,(MAX(fabs(ev[0]),fabs(ev[NVAR-1]))));
+      maxevroe = MAX(maxevroe,(MAX(fabs(ev[0]),fabs(ev[NWAVE-1]))));
 
 /*--- Step 3. ------------------------------------------------------------------
  * Check that the density and pressure in the intermediate states are positive.
@@ -122,26 +122,26 @@ Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
       ur[4] = er;
 #endif
 #ifdef MHD
-      ul[NVAR-2] = wl[i][NVAR-2];
-      ul[NVAR-1] = wl[i][NVAR-1];
-      ur[NVAR-2] = wr[i][NVAR-2];
-      ur[NVAR-1] = wr[i][NVAR-1];
+      ul[NWAVE-2] = wl[i][NWAVE-2];
+      ul[NWAVE-1] = wl[i][NWAVE-1];
+      ur[NWAVE-2] = wr[i][NWAVE-2];
+      ur[NWAVE-1] = wr[i][NWAVE-1];
 #endif
 /* Now compute intermediate states of conserved variables using Roe solver */
-      for (n=0; n<NVAR; n++) {du[n] = ur[n] - ul[n];}
-      for (n=0; n<NVAR; n++) {
+      for (n=0; n<NWAVE; n++) {du[n] = ur[n] - ul[n];}
+      for (n=0; n<NWAVE; n++) {
 	 a[n] = 0.0;
-         for (m=0; m<NVAR; m++) {a[n] += lem[n][m]*du[m];}
+         for (m=0; m<NWAVE; m++) {a[n] += lem[n][m]*du[m];}
       }
-      for (n=0; n<NVAR; n++) {u_inter[n] = ul[n];}
-      for (n=0; n<NVAR-1; n++) {
-         for (m=0; m<NVAR; m++) {u_inter[m] += a[n]*rem[m][n];}
+      for (n=0; n<NWAVE; n++) {u_inter[n] = ul[n];}
+      for (n=0; n<NWAVE-1; n++) {
+         for (m=0; m<NWAVE; m++) {u_inter[m] += a[n]*rem[m][n];}
          if (u_inter[0] < 0.0) {hlle_flag=1;}
 #ifdef ADIABATIC
 	 p_inter = u_inter[4] - 0.5*
 	       (SQR(u_inter[1])+SQR(u_inter[2])+SQR(u_inter[3]))/u_inter[0];
 #ifdef MHD
-	 p_inter -= 0.5*(SQR(u_inter[NVAR-2])+SQR(u_inter[NVAR-1])+SQR(b1[i]));
+	 p_inter -= 0.5*(SQR(u_inter[NWAVE-2])+SQR(u_inter[NWAVE-1])+SQR(b1[i]));
 #endif
 	 if (p_inter < 0.0) {hlle_flag=2;}
 #endif
@@ -170,22 +170,22 @@ Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
 #endif
 
 #ifdef MHD
-      fl[1] -= 0.5*(b1[i]*b1[i] - SQR(wl[i][NVAR-2]) - SQR(wl[i][NVAR-1]));
-      fr[1] -= 0.5*(b1[i]*b1[i] - SQR(wr[i][NVAR-2]) - SQR(wr[i][NVAR-1]));
-      fl[2] -= b1[i]*wl[i][NVAR-2];
-      fr[2] -= b1[i]*wr[i][NVAR-2];
-      fl[3] -= b1[i]*wl[i][NVAR-1];
-      fr[3] -= b1[i]*wr[i][NVAR-1];
+      fl[1] -= 0.5*(b1[i]*b1[i] - SQR(wl[i][NWAVE-2]) - SQR(wl[i][NWAVE-1]));
+      fr[1] -= 0.5*(b1[i]*b1[i] - SQR(wr[i][NWAVE-2]) - SQR(wr[i][NWAVE-1]));
+      fl[2] -= b1[i]*wl[i][NWAVE-2];
+      fr[2] -= b1[i]*wr[i][NWAVE-2];
+      fl[3] -= b1[i]*wl[i][NWAVE-1];
+      fr[3] -= b1[i]*wr[i][NWAVE-1];
 #ifdef ADIABATIC
-      fl[4] += (pbl*wl[i][1] - b1[i]*(b1[i]*wl[i][1] + wl[i][NVAR-2]*wl[i][2]
-				                    + wl[i][NVAR-1]*wl[i][3]));
-      fr[4] += (pbr*wr[i][1] - b1[i]*(b1[i]*wr[i][1] + wr[i][NVAR-2]*wr[i][2]
-                                                    + wr[i][NVAR-1]*wr[i][3]));
+      fl[4] += (pbl*wl[i][1] - b1[i]*(b1[i]*wl[i][1] + wl[i][NWAVE-2]*wl[i][2]
+				                    + wl[i][NWAVE-1]*wl[i][3]));
+      fr[4] += (pbr*wr[i][1] - b1[i]*(b1[i]*wr[i][1] + wr[i][NWAVE-2]*wr[i][2]
+                                                    + wr[i][NWAVE-1]*wr[i][3]));
 #endif
-      fl[NVAR-2] = wl[i][NVAR-2]*wl[i][1] - b1[i]*wl[i][2];
-      fr[NVAR-2] = wr[i][NVAR-2]*wr[i][1] - b1[i]*wr[i][2];
-      fl[NVAR-1] = wl[i][NVAR-1]*wl[i][1] - b1[i]*wl[i][3];
-      fr[NVAR-1] = wr[i][NVAR-1]*wr[i][1] - b1[i]*wr[i][3];
+      fl[NWAVE-2] = wl[i][NWAVE-2]*wl[i][1] - b1[i]*wl[i][2];
+      fr[NWAVE-2] = wr[i][NWAVE-2]*wr[i][1] - b1[i]*wr[i][2];
+      fl[NWAVE-1] = wl[i][NWAVE-1]*wl[i][1] - b1[i]*wl[i][3];
+      fr[NWAVE-1] = wr[i][NWAVE-1]*wr[i][1] - b1[i]*wr[i][3];
 #endif
 
 /*--- Step 5. ------------------------------------------------------------------
@@ -218,18 +218,18 @@ Real roe_fluxes(Real wl[NXMAX][NVAR], Real wr[NXMAX][NVAR],
          qsq = asq + pbr/wr[i][0];
          cfsq = 0.5*(qsq + sqrt(qsq*qsq-4.*asq*vaxsq));
          cfr = sqrt(cfsq);
-         bp = MAX(MAX(ev[NVAR-1],(wr[i][1] + cfr)), 0.0);
+         bp = MAX(MAX(ev[NWAVE-1],(wr[i][1] + cfr)), 0.0);
          bm = MIN(MIN(ev[0]     ,(wl[i][1] - cfl)), 0.0);
-         for (n=0; n<NVAR; n++) {
+         for (n=0; n<NWAVE; n++) {
             f[i][n] = ((bp*fl[n]-bm*fr[n]) + bp*bm*(ur[n]-ul[n]))/(bp-bm);
          }
 
 /* Use Roe solver */
 
       } else {
-         for (n=0; n<NVAR; n++) {
+         for (n=0; n<NWAVE; n++) {
          f[i][n] = 0.5*(fl[n] + fr[n]);
-         for (m=0; m<NVAR; m++) {
+         for (m=0; m<NWAVE; m++) {
             f[i][n] -= 0.5*fabs(ev[m])*a[m]*rem[n][m];
          }}
       }
