@@ -1,0 +1,698 @@
+\nonstopmode
+\documentstyle[11pt]{article}
+\setlength{\textheight}{9.0in}
+\setlength{\textwidth}{6.5in}
+\hoffset=-1.3 truecm
+\voffset=-1.7 truecm
+
+
+\newcommand{\Dt}[0]{\bigtriangleup t}
+\newcommand{\Dx}[0]{\bigtriangleup x}
+\makeatletter                                            %KT
+\@ifundefined{epsfbox}{\@input{epsf.sty}}{\relax}        %KT
+\def\plotone#1{\centering \leavevmode                    %KT
+\epsfxsize=\columnwidth \epsfbox{#1}}                    %KT
+\def\plotone_reduction#1#2{\centering \leavevmode        %KT
+\epsfxsize=#2\columnwidth \epsfbox{#1}}                  %KT
+\def\plottwo#1#2{\centering \leavevmode                  %KT
+\epsfxsize=.45\columnwidth \epsfbox{#1} \hfil            %KT
+\epsfxsize=.45\columnwidth \epsfbox{#2}}                 %KT
+\def\plotfiddle#1#2#3#4#5#6#7{\centering \leavevmode     %KT
+\vbox to#2{\rule{0pt}{#2}}                               %KT
+\special{psfile=#1 voffset=#7 hoffset=#6 vscale=#5 hscale=#4 angle=#3}} %KT
+\makeatother
+
+
+\begin{document}
+\section{Introduction}
+
+Need for numerical methods.  ZEUS and other codes.  Reasons for a new code.
+Why use conservative form.
+
+The equations of motion can be written in conservative form as
+\begin{equation}
+\frac{\partial {\bf U}}{\partial t} + 
+   {\bf \nabla} \cdot {\bf F}({\bf U}) = 0,
+\end{equation}
+where ${\bf U}$ is a vector of conserved quantities and ${\bf F}$ the vector
+of their fluxes.  The number and form of the components of both ${\bf U}$
+and ${\bf F}$ depend on the physics of the problem to be solved.  
+
+Outline of paper.
+
+\section{The Numerical Algorithm in One-Dimension}
+
+\subsection{Basic Equations}
+
+For adiabatic MHD (the most general system considered here),
+the vector of conserved quantities and their fluxes are
+\begin{equation}
+{\bf U}  = \left[ \begin{array}{c}
+  \rho \\
+  \rho v_{x} \\
+  \rho v_{y} \\
+  \rho v_{z} \\
+   E \\
+   B_{y} \\
+   B_{z} \\ \end{array} \right] , \hspace{1cm}
+{\bf F_{x}} = \left[ \begin{array}{c}
+  \rho v_{x} \\
+  \rho v_{x}^{2} + P + B^{2}/(8\pi) - B_{x}^{2}/(4\pi) \\
+  \rho v_{x}v_{y} - B_{x}B_{y}/(4\pi) \\
+  \rho v_{x}v_{z} - B_{x}B_{z}/(4\pi) \\
+  (E + P + B^{2}/(8\pi)) - ({\bf B}\cdot{\bf v})B_{x}/(4\pi) \\
+  B_{y}v_{x} - B_{x}v_{y} \\
+  B_{z}v_{x} - B_{x}v_{z} \end{array} \right].
+\end{equation}
+where
+\begin{equation}
+  E = \frac{P}{\gamma -1} + \frac{1}{2}\rho v^{2} + \frac{B^{2}}{8\pi}
+\end{equation}
+and $B^{2} = {\bf B} \cdot {\bf B}$.
+
+For isothermal MHD, the fifth components of ${\bf U}$ and ${\bf F_{x}}$
+are dropped, and equation (3) is replaced with $P=\rho C^{2}$, where
+$C$ is a constant (the isothermal speed of sound).  For adiabatic
+hydrodynamics, the last two components of ${\bf U}$ and ${\bf F_{x}}$
+are dropped, as well as all terms involving the magnetic field in
+equations (2) and (3).  For isothermal hydrodynamics, the last three
+components of ${\bf U}$ and ${\bf F_{x}}$ are dropped, as well as all
+terms involving the magnetic field in equations (2) and (3).
+
+\subsection{Discretization}
+
+To develop a numerical algorithm which generates approximate solutions to
+equation (1), we first discretize each variable on a spatial mesh.
+These are zone averages.
+
+\begin{figure}
+\plotone_reduction{fig1.eps}{0.8}
+\caption{Temporal and spatial centering of variables in 1-D}
+\end{figure}
+
+A temporally second-order accurate representation of equation (1) is then
+\begin{equation}
+  {\bf U}_{i}^{n+1} = {\bf U}_{i}{n} - 
+\frac{\Dt}{\Dx}\left( {\bf F}_{i+1/2}^{n+1/2} - {\bf F}_{i-1/2}^{n+1/2} \right)
+\end{equation}
+
+Most of the effort in the numerical scheme goes into developing an
+accurate and stable form for the time-centered fluxes 
+${\bf F}_{i\pm 1/2}^{n+1/2}$.
+
+Discussion of the basic types of schemes used to compute fluxes.
+Centered difference schemes. Godunov schemes.  Riemann solvers.
+Linearized solvers. $U_{,t} = AU_{,x}$.
+Roe (1981) has developed one linearization.  Why we choose Roe's method.
+
+However, we do not really need an accurate solution for the fluxes as a
+function of time.  What we are most interested in is an accurate representation
+of the integrated flux through each cell interface over one timestep.
+Thus, the most attractive schemes are those which use a simple construction
+for the fluxes which is nonetheless accurate for the integral.
+
+\subsection{Roe's Method}
+
+Property U.  Parameter vector.
+
+The fluxes are
+\begin{equation}
+{\bf F}_{i+1/2}^{n+1/2} = \frac{1}{2} \left( {\bf F}_{L} + {\bf F}_{R} \right)
+ + \frac{1}{2} \Sigma a_{i} | \lambda_{i} | {\bf R}_{i}
+\end{equation}
+where ${\bf F}_{L}={\bf F}({\bf U}_{L})$, ${\bf F}_{R}={\bf F}({\bf U}_{R})$,
+and
+\begin{equation}
+  a_{i} = {\bf L}_{i} \bigtriangleup {\bf U}_{i}
+\end{equation}
+\begin{equation}
+  \bigtriangleup {\bf U}_{i} = {\bf U}_{i,L} - {\bf U}_{i,R}
+\end{equation}
+and $\lambda_{i}$, ${\bf R}_{i}$, and ${\bf L}_{i}$ are the eigenvalues,
+and right- and left-eigenvectors of the linearized system respectively.
+These are functions of the primitive variables, that is
+$\lambda_{i} = \lambda_{i}(\bar{\bf U})$,
+${\bf R}_{i} = {\bf R}_{i}(\bar{\bf U})$, and
+${\bf L}_{i} = {\bf L}_{i}(\bar{\bf U})$.
+
+The functional forms for the eigenvalues and eigenvectors of course
+depend on the physics.  Explicit forms for each are given in an Appendix
+for the cases of adiabatic or isothermal hydrodynamics or MHD.
+Many choices are possible for, the average state $\bar{\bf U}$.  Roe (1981)
+has shown that one optimal choice is given by...
+
+\begin{figure}
+\plotone_reduction{fig2.ps}{0.8}
+\caption{Representation of Riemann problem with Roe's linearization.}
+\end{figure}
+
+\begin{figure}
+\plotone_reduction{fig3.ps}{0.8}
+\caption{Cokmparison of exact and approximate solution to Sod's shocktube
+problem.}
+\end{figure}
+
+The ${\bf U}_{L}$ and ${\bf U}_{R}$ are the left- and right-state
+constructed by a spatial interpolation of the distribution of U within
+each cell; the technique for claculating these is described below.
+
+\subsection{Left and Right States}
+
+Spatial interpolation of primitive versus characteristic variables
+(latter is supposedly superior).
+
+Following Colella (1990), the left- and right-state vectors are
+\begin{equation}
+{\bf U}_{L,i+1/2}^{n+1/2} = \bar{\bf U}_{L,i+1/2} + \frac{\Dt}{2 \Dx}
+\Sigma (\lambda_{i}^{M} - \lambda_{i}^{\alpha})
+ \bigtriangleup W_{i} R({\bf U}_{i})
+\end{equation}
+\begin{equation}
+{\bf U}_{R,i+1/2}^{n+1/2} = \bar{\bf U}_{R,i+1/2} + \frac{\Dt}{2 \Dx}
+\Sigma (\lambda_{i}^{m} - \lambda_{i}^{\alpha})
+ \bigtriangleup W_{i+1} R({\bf U}_{i+1})
+\end{equation}
+where
+\begin{equation}
+\bar{\bf U}_{i+1/2,L} = {\bf U}_{i} + \left[ \frac{1}{2} - 
+ max (\lambda_{i},0)\frac{\Dt}{2 \Dx} \right] \bigtriangleup {\bf U}_{i}
+\end{equation}
+\begin{equation}
+\bar{\bf U}_{i+1/2,R} = {\bf U}_{i+1} - \left[ \frac{1}{2} +
+ min (\lambda_{i+1},0)\frac{\Dt}{2 \Dx} \right] \bigtriangleup {\bf U}_{i+1}
+\end{equation}
+and
+\begin{equation}
+\bigtriangleup {\bf U}_{i} = \Sigma \bigtriangleup W_{i} R({\bf U}_{i})
+\end{equation}
+
+\subsection{Time step Criterion}
+
+\subsection{Tests}
+
+Hydro: advection (+ convergence rates); Sod (+ errors compared to ZEUS, Lagrange plus remap PPM); Einfeldt, two interacting blast waves.
+
+MHD: Brio \& Wu, Alfven waves, all four R\&J problems.
+
+\section{The Numerical Algorithm in Multidimensions}
+
+\subsection{Tests}
+
+\section{Nested Grids}
+
+\subsection{Tests}
+
+\appendix
+\setcounter{equation}{0}
+\renewcommand{\theequation}{\Alph{section}\arabic{equation}}
+\section{Eigensystems in the Primitive Variables}
+
+In this appendix, we give explicit forms for the the eigenvalues and
+eigenvectors of the matrix ${\sf A}$ resulting from linearizing the
+dynamical equations as ${\bf W}_{,t} = {\sf A}{\bf W}_{,x}$, where
+${\bf W}$ is a vector composed of the primitive variables.  These
+eigensystems are needed for the characteristic interpolation of the
+primitive variables (see \S X).
+
+\subsection{Adiabatic Hydrodynamics}
+
+For adiabatic hydrodynamics, ${\bf W} = (\rho, v_{x}, v_{y}, v_{z}, P)$,
+and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A} = \left[ \begin{array}{ccccc}
+v_{x} & \rho       & 0     & 0     & 0      \\
+0     & v_{x}      & 0     & 0     & 1/\rho \\
+0     & 0          & v_{x} & 0     & 0      \\
+0     & 0          & 0     & v_{x} & 0      \\
+0     & \rho a^{2} & 0     & 0     & v_{x}  \end{array} \right] ,
+\end{equation}
+where $a^{2} = \gamma P/\rho$ ($a$ is the adiabatic sound speed).
+The five eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-a, v_{x}, v_{x}, v_{x}, v_{x}+a).
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix
+\begin{equation}
+{\sf R}  = \left[ \begin{array}{ccccc}
+1       & 1 & 0 & 0 & 1      \\
+-a/\rho & 0 & 0 & 0 & a/\rho \\
+0       & 0 & 1 & 0 & 0      \\
+0       & 0 & 0 & 1 & 0      \\
+a^{2}   & 0 & 0 & 0 & a^{2}  \end{array} \right] ,
+\end{equation}
+while the left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L}  = \left[ \begin{array}{ccccc}
+0 & -\rho/(2a) & 0 & 0 & 1/(2a^{2}) \\
+1 &  0       & 0 & 0 & -1/a^{2} \\
+0 &  0       & 1 & 0 &  0       \\
+0 &  0       & 0 & 1 &  0       \\
+0 & \rho/(2a)  & 0 & 0 & 1/(2a^{2}) \end{array} \right] .
+\end{equation}
+
+\subsection{Isothermal Hydrodynamics}
+
+For isothermal hydrodynamics, ${\bf W} = (\rho, v_{x}, v_{y}, v_{z})$, and the
+matrix ${\sf A}$ is identical to equation (A1), with the fourth row and column
+dropped, and $a$ replaced by the isothermal sound speed $C$.
+The four eigenvalues of the resulting matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C, v_{x}, v_{x}, v_{x}+C).
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix given
+in equation (A3), while the left-eigenvectors are the rows of the matrix given
+in equation (A4), where in both cases the fourth row and column is dropped,
+and $a$ is replaced by $C$.
+
+\subsection{Adiabatic Magnetohydrodynamics}
+
+For adiabatic MHD, ${\bf W} = (\rho, v_{x}, v_{y}, v_{z}, P, b_{y}, b_{z})$,
+where ${\bf b} = {\bf B}/\sqrt{4\pi}$, and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A} = \left[ \begin{array}{cccccccc}
+v_x & \rho & 0 & 0 & 0 & 0 & 0 \\
+0 & v_x & 0 & 0 & 1/\rho & b_y/\rho & b_z/\rho \\
+0 & 0 & v_x & 0 & 0 & -b_x/\rho & 0 \\
+0 & 0 & 0 & v_x & 0 & 0 & -b_x/\rho \\
+0 & \rho a^{2} & 0 & 0 & v_{x} & 0 & 0 \\
+0 & b_y & -b_x & 0 & 0 & v_x & 0 \\
+0 & b_z & 0 & -b_x & 0 & 0 & v_x  \end{array} \right] .
+\end{equation}
+where $a^{2} = \gamma P/\rho$.
+The seven eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C_{f}, v_{x}-C_{Ax}, v_{x}-C_{s}, v_{x},
+v_{x}+C_{s}, v_{x}+C_{Ax}, v_{x}+C_{f})
+\end{equation}
+where the fast- and slow-magnetosonic wave speeds are given by
+\begin{equation}
+C_{f,s}^2 = \frac{1}{2} \left( \left[a^{2}+C_{A}^{2}\right] \pm
+\sqrt{\left[a^{2}+C_{A}^{2}\right]^{2} - 4 a^2 C_{Ax}^2}\right)
+\end{equation}
+(with $C_{f}[C_{s}]$ given by the $+[-]$ sign).  The Alfv\'{e}n speeds are
+given by
+\begin{equation}
+C_{A}^{2} = (b_{x}^{2}+b_{y}^{2 }+b_{z}^{2})/\rho, \hspace*{1cm}
+C_{Ax}^{2} = b_{x}^{2}/\rho.
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix
+\begin{equation}
+{\sf R}  = \left[ \begin{array}{ccccccc}
+\rho\alpha_{f} & 0 & \rho\alpha_{s} & 1 & \rho\alpha_{s} & 0 & \rho\alpha_{f} \\
+-C_{ff} & 0 & -C_{ss} & 0 & C_{ss} & 0 & C_{ff} \\
+Q_{s}\beta_{y} & -\beta_{z} & -Q_{f}\beta_{y} & 0 & Q_{f}\beta_{y} & \beta_{z} & -Q_{s}\beta_{y} \\
+Q_{s}\beta_{z} & \beta_{y} & -Q_{f}\beta_{z} & 0 & Q_{f}\beta_{z} & -\beta_{y} & -Q_{s}\beta_{z} \\
+\rho a^{2}\alpha_{f} & 0 & \rho a^{2}\alpha_{s} & 0 & \rho a^{2}\alpha_{s} & 0 & \rho a^{2}\alpha_{f} \\
+A_{s}\beta_{y} & -\beta_{z}S\sqrt{\rho} & -A_{f}\beta_{y} & 0 & -A_{f}\beta_{y} & -\beta_{z}S\sqrt{\rho} & A_{s}\beta_{y} \\
+A_{s}\beta_{z} & \beta_{y}S\sqrt{\rho} & -A_{f}\beta_{z} & 0 & -A_{f}\beta_{z} & \beta_{y}S\sqrt{\rho} & A_{s}\beta_{z} \end{array} \right] ,
+\end{equation}
+where $S={\rm sign}(b_{x})$, and
+\begin{equation}
+C_{ff} = C_{f}\alpha_{f}, \hspace*{1cm}
+C_{ss} = C_{s}\alpha_{s},
+\end{equation}
+\begin{equation}
+Q_{f} = C_{f}\alpha_{f}S, \hspace*{1cm}
+Q_{s} = C_{s}\alpha_{s}S,
+\end{equation}
+\begin{equation}
+A_{f} = a\alpha_{f}\sqrt{\rho}, \hspace*{1cm}
+A_{s} = a\alpha_{s}\sqrt{\rho},
+\end{equation}
+\begin{equation}
+\alpha_{f}^{2} = \frac{a^{2} - C_{s}^{2}}{C_{f}^{2} - C_{s}^{2}}, \hspace*{1cm}
+\alpha_{s}^{2} = \frac{C_{f}^{2} - a^{2}}{C_{f}^{2} - C_{s}^{2}},
+\end{equation}
+\begin{equation}
+\beta_{y} = \frac{b_{y}}{\sqrt{b_{y}^{2} + b_{z}^{2}}}, \hspace*{1cm}
+\beta_{z} = \frac{b_{z}}{\sqrt{b_{y}^{2} + b_{z}^{2}}}.
+\end{equation}
+In the degenerate case where $C_{A}=C_{Ax}=a$, so that $C_{f}=C_{s}$, then
+equation (A14) becomes $\alpha_{f}=1$ and $\alpha_{s}=0$.
+The left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L}  = \left[ \begin{array}{ccccccc}
+0 & -N_{f}C_{ff} & N_{f}Q_{s}\beta_{y} & N_{f}Q_{s}\beta_{z} & N_{f}\alpha_{f}/\rho & N_{f}A_{s}\beta_{y}/\rho & N_{f}A_{s}\beta_{z}/\rho \\
+0 & 0 & -\beta_{z}/2 & \beta_{y}/2 & 0 & -\beta_{z}S/(2\sqrt{\rho}) & \beta_{y}S/(2\sqrt{\rho}) \\
+0 & -N_{s}C_{ss} & -N_{s}Q_{f}\beta_{y} & -N_{s}Q_{f}\beta_{z} & N_{s}\alpha_{s}/\rho & -N_{s}A_{f}\beta_{y}/\rho & -N_{s}A_{f}\beta_{z}/\rho \\
+1 & 0 & 0 & 0 & -1/a^{2} & 0 & 0 \\
+0 & N_{s}C_{ss} & N_{s}Q_{f}\beta_{y} & N_{s}Q_{f}\beta_{z} & N_{s}\alpha_{s}/\rho & -N_{s}A_{f}\beta_{y}/\rho & -N_{s}A_{f}\beta_{z}/\rho \\
+0 & 0 & \beta_{z}/2 & -\beta_{y}/2 & 0 & -\beta_{z}S/(2\sqrt{\rho}) & \beta_{y}S/(2\sqrt{\rho}) \\
+0 & N_{f}C_{ff} & -N_{f}Q_{s}\beta_{y} & -N_{f}Q_{s}\beta_{z} & N_{f}\alpha_{f}/\rho & N_{f}A_{s}\beta_{y}/\rho & N_{f}A_{s}\beta_{z}/\rho \end{array} \right] ,
+\end{equation}
+where
+\begin{equation}
+N_{f} = N_{s} = \frac{1}{2a^{2}}
+\end{equation}
+are normalization factors for the eigenvectors corresponding to the fast-
+and slow-magnetosonic waves respectively.
+
+\subsection{Isothermal Magnetohydrodynamics}
+
+For isothermal MHD, ${\bf W} = (\rho, v_{x}, v_{y}, v_{z}, b_{y}, b_{z})$,
+where ${\bf b} = {\bf B}/\sqrt{4\pi}$, and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A} = \left[ \begin{array}{ccccccc}
+v_x & \rho & 0 & 0 & 0 & 0 \\
+0 & v_x & 0 & 1/\rho & b_y/\rho & b_z/\rho \\
+0 & 0 & v_x & 0 & -b_x/\rho & 0 \\
+0 & 0 & 0 & v_x & 0 & -b_x/\rho \\
+0 & b_y & -b_x & 0 & v_x & 0 \\
+0 & b_z & 0 & -b_x & 0 & v_x  \end{array} \right] .
+\end{equation}
+The six eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C_{f}, v_{x}-C_{Ax}, v_{x}-C_{s}, 
+v_{x}+C_{s}, v_{x}+C_{Ax}, v_{x}+C_{f}), 
+\end{equation}
+where the fast and slow-magnetosonic wave speeds are given by equation
+(A8) (with $a$ replaced by the isothermal sound speed $C$ here and throughout),
+and the Alfven speeds are given by equation (A9).  The
+corresponding right-eigenvectors are the columns of the matrix given in
+equation (A10), with the fifth row and fourth column dropped.  The
+left-eigenvectors are the rows of the matrix given in equation (A14),
+with the fifth row and fourth column dropped, and with
+\begin{equation}
+N_{f} = \frac{1}{C^{2}(1+\alpha_{s}^{2})}, \hspace*{1cm}
+N_{s} = \frac{1}{C^{2}(1+\alpha_{f}^{2})}.
+\end{equation}
+
+\setcounter{equation}{0}
+\section{Eigensystems in the Conserved Variables}
+
+In this appendix, we give explicit forms for the the eigenvalues and
+eigenvectors of the matrix ${\sf A}$ resulting from linearizing the
+dynamical equations as ${\bf U}_{,t} = {\sf A}{\bf U}_{,x}$, where
+${\bf U}$ is a vector composed of the conserved variables.  These
+eigensystems are needed to construct the fluxes of the conserved
+quantities (see \S X).
+
+\subsection{Adiabatic Hydrodynamics}
+
+For adiabatic hydrodynamics, ${\bf U} = (\rho, \rho v_{x}, \rho v_{y},
+\rho v_{z}, E)$, and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A}  = \left[ \begin{array}{ccccc}
+0 & 1 & 0 & 0 & 0 \\
+-v_{x}^{2} + \gamma^{\prime}v^{2}/2 & -(\gamma -3)v_{x} & -\gamma^{\prime}v_{y} & -\gamma^{\prime}v_{z} & \gamma^{\prime} \\
+-v_{x}v_{y} & v_{y} & v_{x} & 0 & 0 \\
+-v_{x}v_{z} & v_{z} & 0 & v_{x} & 0 \\
+-v_{x}H + \gamma^{\prime}v_{x}v^{2}/2 & -\gamma^{\prime}v_{x}^{2} + H & -\gamma^{\prime}v_{x}v_{y} & -\gamma^{\prime}v_{x}v_{z} & \gamma v_{x} \end{array} \right]
+\end{equation}
+where the enthalpy $H = (E+P)/\rho$, $v^{2} = {\bf v}\cdot{\bf v}$, and
+$\gamma^{\prime} = (\gamma -1)$.  The five eigenvalues of this matrix
+in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-a, v_{x}, v_{x}, v_{x}, v_{x}+a),
+\end{equation}
+where $a^{2} = (\gamma-1)(H-v^{2}/2) = \gamma P/\rho$ ($a$ is the
+adiabatic sound speed).  The corresponding right-eigenvectors are the
+columns of the matrix
+\begin{equation}
+{\sf R}  = \left[ \begin{array}{ccccc}
+1         & 0     & 0     & 1       & 1         \\ 
+v_{x} - a & 0     & 0     & v_{x}   & v_{x} + a \\
+v_{y}     & 1     & 0     & v_{y}   & v_{y}     \\
+v_{z}     & 0     & 1     & v_{z}   & v_{z}     \\
+H-v_{x}a  & v_{y} & v_{z} & v^{2}/2 & H+v_{x}a  \end{array} \right] ,
+\end{equation}
+The left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L} =  \left[ \begin{array}{ccccc}
+N_{a}(\gamma^{\prime}v^{2}/2 + v_{x}a) & -N_{a}(\gamma^{\prime}v_{x} + a) & -N_{a}\gamma^{\prime}v_{y} & -N_{a}\gamma^{\prime}v_{z} & N_{a}\gamma^{\prime} \\
+-v_{y} & 0 & 1 & 0 & 0 \\
+-v_{z} & 0 & 0 & 1 & 0 \\
+1-N_{a}\gamma^{\prime}v^{2} & \gamma^{\prime}v_{x}/a^{2} & \gamma^{\prime}v_{y}/a^{2} & \gamma^{\prime}v_{z}/a^{2} & -\gamma^{\prime}/a^{2} \\
+N_{a}(\gamma^{\prime}v^{2}/2 - v_{x}a) & -N_{a}(\gamma^{\prime}v_{x} - a) & -N_{a}\gamma^{\prime}v_{y} & -N_{a}\gamma^{\prime}v_{z} & N_{a}\gamma^{\prime}
+\end{array} \right] ,
+\end{equation}
+where $N_{a} = 1/(2a^{2})$.  These are identical to those given by Roe (1981),
+except the second and third eigenvectors (corresponding to the transport of
+shear motion) have been rescaled to avoid singularities.
+
+\subsection{Isothermal Hydrodynamics}
+
+For isothermal hydrodynamics, ${\bf U} = (\rho, \rho v_{x}, \rho v_{y},
+\rho v_{z})$, and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A}  = \left[ \begin{array}{cccc}
+0 & 1 & 0 & 0 \\
+-v_{x}^{2} + C^{2} & 2v_{x} & 0 & 0 \\
+-v_{x}v_{y} & v_{y} & v_{x} & 0 \\
+-v_{x}v_{z} & v_{z} & 0 & v_{x} \end{array} \right]
+\end{equation}
+where $C$ is the isothermal sound speed.
+The four eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C, v_{x}, v_{x}, v_{x}+C).
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix given
+in equation (B3) with the fifth row and fourth column dropped, and $a$ replaced
+by $C$ throughout.  The left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L}  = \left[ \begin{array}{cccc}
+(1 + v_{x}/C)/2 & -1/(2C) & 0 & 0 \\
+-v_{y}          &  0    & 1 & 0 \\
+-v_{z}          &  0    & 0 & 1 \\
+(1 - v_{x}/C)/2 & 1/(2C)  & 0 & 0 \end{array} \right] .
+\end{equation}
+
+\subsection{Adiabatic Magnetohydrodynamics}
+
+For adiabatic MHD, ${\bf U} = (\rho, \rho v_{x}, \rho v_{y},
+\rho v_{z}, E, b_{y}, b_{z})$, where ${\bf b} = {\bf B}/\sqrt{4\pi}$,
+and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A} = \left[ \begin{array}{ccccccc}
+0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+-v_{x}^{2} + \gamma^{\prime}v^{2}/2 - X^{\prime} & -(\gamma-3)v_{x} & -\gamma^{\prime}v_{y} & -\gamma^{\prime}v_{z} & \gamma^{\prime} & -b_{y}Y^{\prime} & -b_{z}Y^{\prime} \\
+- v_{x} v_{y} & v_{y} & v_{x} & 0 & 0 & -b_{x} & 0 \\
+- v_{x} v_{z} & v_{z} & 0 & v_{x} & 0 & 0 & -b_{x} \\
+A_{51} & A_{52} & A_{53} & A_{54} & \gamma v_{x} & A_{56} & A_{57} \\
+(b_{x}v_{y} - b_{y}v_{x})/\rho & b_{y}/\rho & -b_{x}/\rho & 0 & 0 & v_{x} & 0 \\
+(b_{x}v_{z} - b_{z}v_{x})/\rho & b_{z}/\rho & 0 & -b_{x}/\rho & 0 & 0 & v_{x}
+\end{array} \right]
+\end{equation}
+where $v^{2} = {\bf v}\cdot{\bf v}$, and
+\begin{equation}
+A_{51} = -v_{x}H + \gamma^{\prime}v_{x}v^{2}/2 + b_{x}(b_{x}v_{x} + b_{y}v_{y}
++ b_{z}v_{z})/\rho - v_{x}X^{\prime}
+\end{equation}
+\begin{equation}
+A_{52} = -\gamma^{\prime}v_{x}^{2} + H - b_{x}^{2}/\rho
+\end{equation}
+\begin{equation}
+A_{53} = -\gamma^{\prime}v_{x}v_{y} - b_{x}b_{y}/\rho
+\end{equation}
+\begin{equation}
+A_{54} = -\gamma^{\prime}v_{x}v_{z} - b_{x}b_{z}/\rho
+\end{equation}
+\begin{equation}
+A_{56} = -(b_{x}v_{y} + b_{y}v_{x}Y^{\prime})
+\end{equation}
+\begin{equation}
+A_{57} = -(b_{x}v_{z} + b_{z}v_{x}Y^{\prime}) 
+\end{equation}
+\begin{equation}
+X=\left[(b_{y}^2-b_{y,L}b_{y,R})+(b_{z}^2-b_{z,L}b_{z,R})\right]/(2\rho)
+\end{equation}
+\begin{equation}
+Y = \frac{\rho_{L} + \rho_{R}}{2\rho}.
+\end{equation}
+In these equations
+$\gamma^{\prime} = (\gamma - 1)$, $X^{\prime} = (\gamma-2)X$,
+$Y^{\prime} = (\gamma-2)Y$, and $H=(E+P+b^{2}/2)/\rho$.
+The factors $X$ and $Y$ are introduced by the averaging scheme defined by
+equation (XX); thus the matrix ${\sf A}$ and its eigenvectors depend
+explicitely on our choice of the Roe averaging scheme.
+The seven eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C_{f}, v_{x}-C_{Ax}, v_{x}-C_{s}, v_{x}
+v_{x}+C_{s}, v_{x}+C_{Ax}, v_{x}+C_{f})
+\end{equation}
+where the fast and slow-magnetosonic wave speeds are given by
+\begin{equation}
+C_{f,s}^2 = \frac{1}{2} \left( \left[\tilde{a}^{2}+\tilde{C}_{A}^{2}\right] \pm
+\sqrt{\left[\tilde{a}^{2}+\tilde{C}_{A}^{2}\right]^{2} - 
+4\tilde{a}^2 C_{Ax}^2}\right)
+\end{equation}
+(with $C_{f}[C_{s}]$ given by the $+[-]$ sign), and
+\begin{equation}
+\tilde{a}^{2} = \gamma^{\prime}\left( H-v^{2}/2-b^{2}/\rho \right) - X^{\prime}
+\end{equation}
+\begin{equation}
+\tilde{C}_{A}^{2} = C_{Ax}^{2} + b_{\perp}^{\ast 2}/\rho \hspace*{1cm}
+C_{Ax}^{2} = b_{x}^{2}/\rho \hspace*{1cm}
+b_{\perp}^{\ast 2} = (\gamma^{\prime} - Y^{\prime})(b_{y}^{2} + b_{z}^{2}).
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix
+\begin{equation}
+{\sf R} = \left[ \begin{array}{ccccccc}
+\alpha_{f} & 0 & \alpha_{s} & 1 &\alpha_{s} & 0 & \alpha_{f} \\
+V_{xf}-C_{ff} & 0 & V_{xs}-C_{ss} & v_{x} & V_{xs}+C_{ss} & 0 & V_{xf}+C_{ff} \\
+V_{yf}+Q_{s}\beta_{y}^{\ast} & -\beta_{z} & V_{ys}-Q_{f}\beta_{y}^{\ast} & v_{y} & V_{ys}+Q_{f}\beta_{y}^{\ast} & \beta_{z} & V_{yf}-Q_{s}\beta_{y}^{\ast} \\
+V_{zf}+Q_{s}\beta_{z}^{\ast} & \beta_{y} & V_{zs}-Q_{f}\beta_{z}^{\ast} & v_{z} & V_{zs}+Q_{f}\beta_{z}^{\ast} & -\beta_{y} & V_{zf}-Q_{s}\beta_{z}^{\ast} \\
+R_{51} & R_{52} & R_{53} & R_{54} & R_{55} & R_{56} & R_{57} \\ 
+A_{s}\beta_{y}^{\ast}/\rho & -\beta_{z}S/\sqrt{\rho} & -A_{f}\beta_{y}^{\ast}/\rho & 0 & -A_{f}\beta_{y}^{\ast}/\rho & -\beta_{z}S/\sqrt{\rho} & A_{s}\beta_{y}^{\ast}/\rho \\
+A_{s}\beta_{z}^{\ast}/\rho & \beta_{y}S/\sqrt{\rho} & -A_{f}\beta_{z}^{\ast}/\rho & 0 & -A_{f}\beta_{z}^{\ast}/\rho & \beta_{y}S/\sqrt{\rho} & A_{s}\beta_{z}^{\ast}/\rho \end{array} \right]
+\end{equation}
+where the $C_{ff,ss}, Q_{f,s}, A_{f,s}, \alpha_{f,s}$ and $\beta_{y,z}$ are
+given by equation (A11) to (A13) (with $a$ replaced by $\tilde{a}$), 
+$V_{if,s} = v_{i}\alpha_{f,s}$ $(i=x,y,z)$, and
+\begin{equation}
+R_{51} = \alpha_{f} \left( H^{\prime}- v_{x}C_{f} \right)
++Q_{s}(v_{y}\beta_{y}^{\ast} + v_{z}\beta_{z}^{\ast})
++A_{s}b_{\perp}^{\ast}\beta_{\perp}^{\ast 2}/\rho,
+\end{equation}
+\begin{equation}
+R_{52} = -(v_{y}\beta_{z} - v_{z}\beta_{y}) = -R_{56},
+\end{equation}
+\begin{equation}
+R_{53} = \alpha_{s} \left( H^{\prime} - v_{x}C_{s} \right)
+-Q_{f}(v_{y}\beta_{y}^{\ast} + v_{z}\beta_{z}^{\ast})
+-A_{f}b_{\perp}^{\ast}\beta_{\perp}^{\ast 2}/\rho,
+\end{equation}
+\begin{equation}
+R_{54} = v^{2}/2 + X^{\prime}/\gamma^{\prime}
+\end{equation}
+\begin{equation}
+R_{55} = \alpha_{s} \left( H^{\prime}+ v_{x}C_{s} \right)
++Q_{f}(v_{y}\beta_{y}^{\ast} + v_{z}\beta_{z}^{\ast})
+-A_{f}b_{\perp}^{\ast}\beta_{\perp}^{\ast 2}/\rho,
+\end{equation}
+\begin{equation}
+R_{57} = \alpha_{f} \left( H^{\prime} + v_{x}C_{f} \right)
+-Q_{s}(v_{y}\beta_{y}^{\ast} + v_{z}\beta_{z}^{\ast})
++A_{s}b_{\perp}^{\ast}\beta_{\perp}^{\ast 2}/\rho.
+\end{equation}
+where $H^{\prime} = H-b^{2}/\rho$.  In these equations
+\begin{equation}
+\beta_{y}^{\ast} = b_{y}/|b_{\perp}^{\ast}|, \hspace*{1cm}
+\beta_{z}^{\ast} = b_{z}/|b_{\perp}^{\ast}|, \hspace*{1cm}
+\beta_{\perp}^{\ast 2} = \beta_{y}^{\ast 2} + \beta_{z}^{\ast 2}.
+\end{equation}
+The left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L} = \left[ \begin{array}{ccccccc}
+L_{11} & -\bar{V}_{xf}-\hat{C}_{ff} & -\bar{V}_{yf} + \hat{Q}_{s}Q_{y}^{\ast} & -\bar{V}_{zf} + \hat{Q}_{s}Q_{z}^{\ast} & \bar{\alpha}_{f} & \hat{A}_{s}{Q}_{y}^{\ast} - \bar{\alpha}_{f}b_{y} & \hat{A}_{s}{Q}_{z}^{\ast} - \bar{\alpha}_{f}b_{z} \\
+L_{21} & 0 & -\beta_{z}/2 & \beta_{y}/2 & 0 & -\beta_{z}S\sqrt{\rho}/2 & \beta_{y}S\sqrt{\rho}/2 \\
+L_{31} & -\bar{V}_{xs}-\hat{C}_{ss} & -\bar{V}_{ys} - \hat{Q}_{f}Q_{y}^{\ast} & -\bar{V}_{zs} - \hat{Q}_{f}Q_{z}^{\ast} & \bar{\alpha}_{s} & -\hat{A}_{f}{Q}_{y}^{\ast} - \bar{\alpha}_{s}b_{y} & -\hat{A}_{f}{Q}_{z}^{\ast} - \bar{\alpha}_{s}b_{z} \\
+L_{41} & 2\bar{v}_{x} & 2\bar{v}_{y} & 2\bar{v}_{z} & -\gamma^{\prime}/a^{2} & 2\bar{b}_{y} & 2\bar{b}_{z} \\
+L_{51} & -\bar{V}_{xs}+\hat{C}_{ss} & -\bar{V}_{ys} + \hat{Q}_{f}Q_{y}^{\ast} & -\bar{V}_{zs} + \hat{Q}_{f}Q_{z}^{\ast} & \bar{\alpha}_{s} & -\hat{A}_{f}{Q}_{y}^{\ast} - \bar{\alpha}_{s}b_{y} & -\hat{A}_{f}{Q}_{z}^{\ast} - \bar{\alpha}_{s}b_{z} \\
+L_{61} & 0 & \beta_{z}/2 & -\beta_{y}/2 & 0 & -\beta_{z}S\sqrt{\rho}/2 & \beta_{y}S\sqrt{\rho}/2 \\
+L_{71} & -\bar{V}_{xf}+\hat{C}_{ff} & -\bar{V}_{yf} - \hat{Q}_{s}Q_{y}^{\ast} & -\bar{V}_{zf} - \hat{Q}_{s}Q_{z}^{\ast} & \bar{\alpha}_{f} & \hat{A}_{s}{Q}_{y}^{\ast} - \bar{\alpha}_{f}b_{y} & \hat{A}_{s}{Q}_{z}^{\ast} - \bar{\alpha}_{f}b_{z}
+\end{array} \right]
+\end{equation}
+where a symbol over the quantity $q$ denotes normalization via
+$\bar{q} = \gamma^{\prime}q/(2a^{2})$ or $\hat{q} = q/(2a^{2})$.  In addition,
+\begin{equation}
+Q_{y}^{\ast} = \beta_{y}^{\ast}/\beta_{\perp}^{\ast 2}, \hspace*{1cm}
+Q_{z}^{\ast} = \beta_{z}^{\ast}/\beta_{\perp}^{\ast 2},
+\end{equation}
+and
+\begin{equation}
+L_{11} = \bar{\alpha}_{f}(v^{2} - H^{\prime}) + \hat{C}_{ff}(C_{f}+v_{x})
+- \hat{Q}_{s}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
+- \hat{A}_{s}|b_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{21} = (v_{y}\beta_{z} - v_{z}\beta_{y})/2 = -L_{61}
+\end{equation}
+\begin{equation}
+L_{31} = \bar{\alpha}_{s}(v^{2} - H^{\prime}) + \hat{C}_{ss}(C_{s}+v_{x})
++ \hat{Q}_{f}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
++ \hat{A}_{f}|b_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{41} = 1 - \bar{v}^{2} + 2\hat{X}^{\prime}
+\end{equation}
+\begin{equation}
+L_{51} = \bar{\alpha}_{s}(v^{2} - H^{\prime}) + \hat{C}_{ss}(C_{s}-v_{x})
+- \hat{Q}_{f}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
++ \hat{A}_{f}|b_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{71} = \bar{\alpha}_{f}(v^{2} - H^{\prime}) + \hat{C}_{ff}(C_{f}-v_{x})
++ \hat{Q}_{s}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
+- \hat{A}_{s}|b_{\perp}|/\rho,
+\end{equation}
+
+\subsection{Isothermal Magnetohydrodynamics}
+
+For isothermal MHD, ${\bf U} = (\rho, \rho v_{x}, \rho v_{y},
+\rho v_{z}, b_{y}, b_{z})$, where ${\bf b} = {\bf B}/\sqrt{4\pi}$,
+and the matrix ${\sf A}$ is
+\begin{equation}
+{\sf A} = \left[ \begin{array}{cccccc}
+0 & 1 & 0 & 0 & 0 & 0 \\
+- v_{x}^2 + C^2 + X & 2 v_{x} & 0 & 0 & b_{y}Y & b_{z}Y  \\
+- v_{x} v_{y} & v_{y} & v_{x} & 0 & -b_{x} & 0 \\
+- v_{x} v_{z} & v_{z} & 0 & v_{x} & 0 & -b_{x} \\
+(b_{x}v_{y} - b_{y}v_{x})/\rho & b_{y}/\rho & -b_{x}/\rho & 0 & v_{x} & 0 \\
+(b_{x}v_{z} - b_{z}v_{x})/\rho & b_{z}/\rho & 0 & -b_{x}/\rho & 0 & v_{x}  
+\end{array} \right]
+\end{equation}
+where $C$ is the isothermal sound speed, and $X$ and $Y$ are given by equations
+(B15) and (B16).  The six eigenvalues of this matrix in ascending order are
+\begin{equation}
+{\bf \lambda} = (v_{x}-C_{f}, v_{x}-C_{Ax}, v_{x}-C_{s},
+v_{x}+C_{s}, v_{x}+C_{Ax}, v_{x}+C_{f})
+\end{equation}
+where the fast- and slow-magnetosonic wave speeds are given by
+\begin{equation}
+C_{f,s}^2 = \frac{1}{2} \left( \left[\tilde{C}^{2}+\tilde{C}_{A}^{2}\right] \pm
+\sqrt{\left[\tilde{C}^{2}+\tilde{C}_{A}^{2}\right]^{2} - 
+4\tilde{C}^2 C_{Ax}^2}\right)
+\end{equation}
+(with $C_{f}[C_{s}]$ given by the $+[-]$ sign), where $\tilde{C}^{2} = C^{2}+X$,
+and the Alfv\'{e}n speeds are 
+\begin{equation}
+\tilde{C}_{A}^{2} = C_{Ax}^{2} + b_{\perp}^{\ast 2}/\rho, \hspace*{1cm}
+C_{Ax}^{2} = b_{x}^{2}/\rho, \hspace*{1cm}
+b_{\perp}^{\ast 2} = Y(b_{y}^{2} + b_{z}^{2}).
+\end{equation}
+The corresponding right-eigenvectors are the columns of the matrix given by
+equation (B21) with the fifth row and fourth column dropped, and $a$ replaced
+by $\tilde{C}$ in the definitions given in equations (A11)-(A12).
+The left-eigenvectors are the rows of the matrix
+\begin{equation}
+{\sf L} = \left[ \begin{array}{cccccc}
+L_{11} & -\hat{C}_{ff} & \hat{Q}_{s}Q_{y}^{\ast} & \hat{Q}_{s}Q_{z}^{\ast} & \hat{A}_{s}Q_{y}^{\ast} & \hat{A}_{s}Q_{z}^{\ast} \\
+(v_{y}\beta_{z} - v_{z}\beta_{y})/2 & 0 & -\beta_{z}/2 & \beta_{y}/2 & -\beta_{z}S\sqrt{\rho}/2 & \beta_{y}S\sqrt{\rho}/2 \\
+L_{31} & -\bar{C}_{ss} & -\bar{Q}_{f}Q_{y}^{\ast} & -\bar{Q}_{f}Q_{z}^{\ast} & -\bar{A}_{f}Q_{y}^{\ast} & -\bar{A}_{f}Q_{z}^{\ast} \\
+L_{41} & \bar{C}_{ss} & \bar{Q}_{f}Q_{y}^{\ast} & \bar{Q}_{f}Q_{z}^{\ast} & -\bar{A}_{f}Q_{y}^{\ast} & -\bar{A}_{f}Q_{z}^{\ast} \\
+-(v_{y}\beta_{z} - v_{z}\beta_{y})/2 & 0 & \beta_{z}/2 & -\beta_{y}/2 & -\beta_{z}S\sqrt{\rho}/2 & \beta_{y}S\sqrt{\rho}/2 \\
+L_{61} & \hat{C}_{ff} & -\hat{Q}_{s}Q_{y}^{\ast} & -\hat{Q}_{s}Q_{z}^{\ast} & \hat{A}_{s}Q_{y}^{\ast} & \hat{A}_{s}Q_{z}^{\ast} \\
+\end{array} \right]
+\end{equation}
+where $C_{ff,ss}, Q_{f,s}$, and $A_{f,s}$ are given by equations (A11)-(A13)
+(with $a$ replaced by $C$), $\beta_{y,z}$ are given by equation (B10),
+$Q_{y,z}^{\ast}$ are given by equation (B20), and
+\begin{equation}
+L_{11} = \hat{C}_{ff}(C_{f} + v_{x}) 
+- \hat{Q}_{s}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
+- \hat{A}_{s}|b^{\ast}_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{31} = \bar{C}_{ss}(C_{s} + v_{x}) 
++ \bar{Q}_{f}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
++ \bar{A}_{f}|b^{\ast}_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{41} = \bar{C}_{ss}(C_{s} - v_{x}) 
+- \bar{Q}_{f}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
++ \bar{A}_{f}|b^{\ast}_{\perp}|/\rho,
+\end{equation}
+\begin{equation}
+L_{61} = \hat{C}_{ff}(C_{f} - v_{x}) 
++ \hat{Q}_{s}(v_{y}Q_{y}^{\ast} + v_{z}Q_{z}^{\ast})
+- \hat{A}_{s}|b^{\ast}_{\perp}|/\rho.
+\end{equation}
+In these equations, a symbol over the quantity $q$ denotes normalization via
+$\bar{q} = q/(C^{2}[1+\alpha_{f}^{2}])$ and
+$\hat{q} = q/(C^{2}[1+\alpha_{s}^{2}])$.
+
+
+
+\end{document}
+
