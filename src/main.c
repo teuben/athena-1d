@@ -8,6 +8,10 @@
 #include "athena.h"
 #include "prototypes.h"
 
+/*********************/
+void linear_wave_error(struct grid_block *agrid);
+/*********************/
+
 int main(void)
 {
 /* Temporary driver program to test Roe's method.                             */

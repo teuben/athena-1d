@@ -92,7 +92,7 @@ Real x[NX1],ev[NVAR],rem[NVAR][NVAR],lem[NVAR][NVAR];
 }
 
 
-Real linear_wave_error(struct grid_block *agrid)
+void linear_wave_error(struct grid_block *agrid)
 {
 /* Computes L1-error in linear waves, ASSUMING WAVE HAS PROPAGATED AN INTEGER 
  * NUMBER OF PERIODS
