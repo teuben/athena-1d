@@ -80,10 +80,12 @@ static void write_dx_header(const struct grid_block *agrid){
   fprintf(pfile,"origin %g\n",0.5*agrid->dx);
   fprintf(pfile,"delta  %g\n\n",agrid->dx);
 
+#ifdef MHD
   fprintf(pfile,"# object 2 is the cell interface positions\n");
   fprintf(pfile,"object 2 class gridpositions counts %d\n",nzones+1);
   fprintf(pfile,"origin %g\n",0.0);
   fprintf(pfile,"delta  %g\n\n",agrid->dx);
+#endif /* MHD */
 
   fprintf(pfile,"# objects 3 on are the data, which ");
   fprintf(pfile,"are in a one-to-one correspondence\n");
@@ -103,7 +105,7 @@ static void write_dx_header(const struct grid_block *agrid){
 #else
     fprintf(pfile,"object %d class array type float rank 0 items %d\n",
 	    n+3,nzones);
-#endif
+#endif /* MHD */
     fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
     fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
   }
@@ -114,8 +116,12 @@ static void write_dx_header(const struct grid_block *agrid){
 
   for(n=0;n<NUM_ARRAY;n++){
     fprintf(pfile,"object \"%s\" class field\n",array_name[n]);
+#ifdef MHD
     fprintf(pfile,"component \"positions\" value %d\n",
 	    (n == (NUM_ARRAY - 1) ? 2 : 1));
+#else
+    fprintf(pfile,"component \"positions\" value 1\n");
+#endif /* MHD */
     fprintf(pfile,"component \"data\" value %d\n\n",n+3);
   }
 
