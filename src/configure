@@ -268,7 +268,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
 ac_unique_file="linear_wave.c"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PROBLEM PRECISION DIM XXX_D EOS GAS WARNING LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PROBLEM PRECISION DIM XXX_D NX1 NX2 NX3 EOS GAS WARNING LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -801,6 +801,9 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-dim=DIM    Dimensionality of program (1,2,3)
+  --with-nx1=NX1    Dimension 1
+  --with-nx2=NX2    Dimension 2
+  --with-nx3=NX3    Dimension 3
   --with-eos=EOS    Equation of state (adiabatic,isothermal)
   --with-gas=GAS    Gas properties (mhd,hydro)
 
@@ -2127,6 +2130,10 @@ echo "Precision of ATHENA = $PRECISION"
 
 
 
+
+
+
+
 # Check whether --with-dim or --without-dim was given.
 if test "${with_dim+set}" = set; then
   withval="$with_dim"
@@ -2137,16 +2144,54 @@ fi;
 DIM=$with_dim
 if test   "$with_dim" = "1"; then
   XXX_D="ONE_D"
+  NX1=1022
+  NX2=1
+  NX3=1
 elif test "$with_dim" = "2"; then
   XXX_D="TWO_D"
+  NX1=256
+  NX2=256
+  NX3=1
 elif test "$with_dim" = "3"; then
   XXX_D="THREE_D"
+  NX1=32
+  NX2=32
+  NX3=32
 else
   { { echo "$as_me:$LINENO: error: expected --with=dim=1,2 or 3" >&5
 echo "$as_me: error: expected --with=dim=1,2 or 3" >&2;}
    { (exit 1); exit 1; }; }
 fi
 echo "Dimensionality of ATHENA = $DIM ($XXX_D)"
+
+
+# Check whether --with-nx1 or --without-nx1 was given.
+if test "${with_nx1+set}" = set; then
+  withval="$with_nx1"
+  with_nx1=$withval
+else
+  with_nx1=$NX1
+fi;
+
+# Check whether --with-nx2 or --without-nx2 was given.
+if test "${with_nx2+set}" = set; then
+  withval="$with_nx2"
+  with_nx2=$withval
+else
+  with_nx2=$NX2
+fi;
+
+# Check whether --with-nx3 or --without-nx3 was given.
+if test "${with_nx3+set}" = set; then
+  withval="$with_nx3"
+  with_nx3=$withval
+else
+  with_nx3=$NX3
+fi;
+NX1=$with_nx1
+NX2=$with_nx2
+NX3=$with_nx3
+echo "Dimensions : XYZ = $NX1 $NX2 $NX3"
 
 
 
@@ -2824,6 +2869,9 @@ s,@PROBLEM@,$PROBLEM,;t t
 s,@PRECISION@,$PRECISION,;t t
 s,@DIM@,$DIM,;t t
 s,@XXX_D@,$XXX_D,;t t
+s,@NX1@,$NX1,;t t
+s,@NX2@,$NX2,;t t
+s,@NX3@,$NX3,;t t
 s,@EOS@,$EOS,;t t
 s,@GAS@,$GAS,;t t
 s,@WARNING@,$WARNING,;t t

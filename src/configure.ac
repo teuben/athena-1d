@@ -26,19 +26,40 @@ dnl --- set dimensionality of the program: DIM/XXX_D ---
 
 AC_SUBST(DIM)
 AC_SUBST(XXX_D)
+AC_SUBST(NX1)
+AC_SUBST(NX2)
+AC_SUBST(NX3)
+
 AC_ARG_WITH(dim, [  --with-dim=DIM    Dimensionality of program (1,2,3)],
 		with_dim=$withval, with_dim="1")
 DIM=$with_dim
 if test   "$with_dim" = "1"; then
   XXX_D="ONE_D"
+  NX1=1022
+  NX2=1
+  NX3=1
 elif test "$with_dim" = "2"; then
   XXX_D="TWO_D"
+  NX1=256
+  NX2=256
+  NX3=1
 elif test "$with_dim" = "3"; then
   XXX_D="THREE_D"
+  NX1=32
+  NX2=32
+  NX3=32
 else
   AC_MSG_ERROR([expected --with=dim=1,2 or 3])
 fi
 echo "Dimensionality of ATHENA = $DIM ($XXX_D)"
+
+AC_ARG_WITH(nx1, [  --with-nx1=NX1    Dimension 1], with_nx1=$withval, with_nx1=$NX1)
+AC_ARG_WITH(nx2, [  --with-nx2=NX2    Dimension 2], with_nx2=$withval, with_nx2=$NX2)
+AC_ARG_WITH(nx3, [  --with-nx3=NX3    Dimension 3], with_nx3=$withval, with_nx3=$NX3)
+NX1=$with_nx1
+NX2=$with_nx2
+NX3=$with_nx3
+echo "Dimensions : XYZ = $NX1 $NX2 $NX3"
 
 dnl -- eos
 
