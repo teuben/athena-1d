@@ -96,20 +96,21 @@ void init_grid_block(FILE *p_input_file, FILE *p_output_file,
      } fprintf(p_output_file,"   BZIIB    = %e\n",bziib);
 #endif
      for (i=0; i<4;   i++) {
-        agrid->boundary_values.uiib[i][0] = diib;
-        agrid->boundary_values.uiib[i][1] = sxiib;
-        agrid->boundary_values.uiib[i][2] = syiib;
-        agrid->boundary_values.uiib[i][3] = sziib;
+       agrid->boundary_values.uiib[i][0] = diib;
+       agrid->boundary_values.uiib[i][1] = sxiib;
+       agrid->boundary_values.uiib[i][2] = syiib;
+       agrid->boundary_values.uiib[i][3] = sziib;
 #ifdef ADIABATIC
-        agrid->boundary_values.uiib[i][4] = eiib;
+       agrid->boundary_values.uiib[i][4] = eiib;
 #endif
 #ifdef MHD
-        agrid->boundary_values.bxiib[i] = bxiib;
-        agrid->boundary_values.uiib[i][NVAR-2] = byiib;
-        agrid->boundary_values.uiib[i][NVAR-1] = bziib;
+       agrid->boundary_values.bxiib[i] = bxiib;
+       agrid->boundary_values.uiib[i][NVAR-3] = bxiib;
+       agrid->boundary_values.uiib[i][NVAR-2] = byiib;
+       agrid->boundary_values.uiib[i][NVAR-1] = bziib;
 #endif
      }
-   } 
+   }
 
 /* If outer-I boundary is flow-in, read constant states */
 
@@ -148,17 +149,18 @@ void init_grid_block(FILE *p_input_file, FILE *p_output_file,
      } fprintf(p_output_file,"   BZOIB    = %e\n",bzoib);
 #endif
      for (i=0; i<4;   i++) {
-        agrid->boundary_values.uoib[i][0] = doib;
-        agrid->boundary_values.uoib[i][1] = sxoib;
-        agrid->boundary_values.uoib[i][2] = syoib;
-        agrid->boundary_values.uoib[i][3] = szoib;
+       agrid->boundary_values.uoib[i][0] = doib;
+       agrid->boundary_values.uoib[i][1] = sxoib;
+       agrid->boundary_values.uoib[i][2] = syoib;
+       agrid->boundary_values.uoib[i][3] = szoib;
 #ifdef ADIABATIC
-        agrid->boundary_values.uoib[i][4] = eoib;
+       agrid->boundary_values.uoib[i][4] = eoib;
 #endif
 #ifdef MHD
-        agrid->boundary_values.bxoib[i] = bxoib;
-        agrid->boundary_values.uoib[i][NVAR-2] = byoib;
-        agrid->boundary_values.uoib[i][NVAR-1] = bzoib;
+       agrid->boundary_values.bxoib[i] = bxoib;
+       agrid->boundary_values.uoib[i][NVAR-3] = bxoib;
+       agrid->boundary_values.uoib[i][NVAR-2] = byoib;
+       agrid->boundary_values.uoib[i][NVAR-1] = bzoib;
 #endif
      }
    }
