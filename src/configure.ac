@@ -10,7 +10,7 @@ AC_PROG_INSTALL
 dnl -- default problem setting for ATHENA
 
 AC_SUBST(PROBLEM)
-PROBLEM=linear_wave
+PROBLEM=shkset
 
 dnl --- precision float/double
 AC_SUBST(PRECISION)
