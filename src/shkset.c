@@ -16,7 +16,10 @@ void shkset(FILE *p_input_file, struct grid_block *agrid)
   char buf[120];
   int i=0;
   int is,ie;
-  Real dl,pl,ul,vl,wl,bxl,byl,bzl,dr,pr,ur,vr,wr,bxr,byr,bzr;
+  Real dl,pl,ul,vl,wl,dr,pr,ur,vr,wr;
+#ifdef MHD
+  Real bxl,byl,bzl,bxr,byr,bzr;
+#endif /* MHD */
 /*============================================================================*/
 
 /* Read left state from 'athinput' */

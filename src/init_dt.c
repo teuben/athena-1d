@@ -13,7 +13,10 @@
 Real init_dt(struct grid_block *agrid)
 {
   int i;
-  Real d,v1,v2,v3,vmax,b1,b2,b3,bsq,va,qsq,p,cs,cmax=0.0,dt;
+  Real d,v1,v2,v3,vmax,bsq,va,qsq,p,cs,cmax=0.0,dt;
+#ifdef MHD
+  Real b1,b2,b3;
+#endif /* MHD */
 
   for (i=agrid->is; i<=agrid->ie; i++) {
     d = agrid->u[i][0];
@@ -50,7 +53,10 @@ Real init_dt(struct grid_block *agrid)
 
 Real init_dt(Grid_Block *agrid){
   int i,j;
-  Real d,v1,v2,v3,vmax,b1,b2,b3,bsq,va,qsq,p,cs,cmax=0.0,dt;
+  Real d,v1,v2,v3,vmax,bsq,va,qsq,p,cs,cmax=0.0,dt;
+#ifdef MHD
+  Real b1,b2,b3;
+#endif /* MHD */
 
   for (i=agrid->is1; i<=agrid->ie1; i++) {
     for (j=agrid->is2; j<=agrid->ie2; j++) {

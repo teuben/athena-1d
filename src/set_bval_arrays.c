@@ -28,7 +28,9 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
       for (n=0;  n<NVAR;  n++) {
 	bval->uiib[i][n] = agrid->boundary_values.uiib[i][n];
       }
+#ifdef MHD
       bval->bxiib[i] = agrid->boundary_values.bxiib[i];
+#endif /* MHD */
     }
 
 /* Do niib=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
@@ -50,7 +52,9 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
       for (n=0;  n<NVAR;  n++) {
 	bval->uiib[i][n] = agrid->u[ii][n];
       }
+#ifdef MHD
       bval->bxiib[i] = agrid->bx[ii];
+#endif /* MHD */
       bval->uiib[i][1] = agrid->u[ii][1]*reflect_s;
     }
   }
@@ -66,7 +70,9 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
       for (n=0;  n<NVAR;  n++) {
 	bval->uoib[i][n] = agrid->boundary_values.uoib[i][n];
       }
+#ifdef MHD
       bval->bxoib[i] = agrid->boundary_values.bxoib[i];
+#endif /* MHD */
     }
 
 /* Do noib=1 (reflection), 2 (flow-out), 4 (periodic) by adjusting i-index   */
@@ -89,7 +95,9 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval)
       for (n=0;  n<NVAR;  n++) {
 	bval->uoib[i][n] = agrid->u[ii][n];
       }
+#ifdef MHD
       bval->bxoib[i] = agrid->bx[ii+1];
+#endif /* MHD */
       bval->uoib[i][1] = agrid->u[ii][1]*reflect_s;
     }
   }
@@ -119,8 +127,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uiib1[i][j][n] = agrid->boundary_values.uiib1[i][j][n];
 	}
+#ifdef MHD
 	bval->bxiib1[i][j] = agrid->boundary_values.bxiib1[i][j];
 	bval->byiib1[i][j] = agrid->boundary_values.byiib1[i][j];
+#endif /* MHD */
       }
     }
 
@@ -144,8 +154,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uiib1[i][j][n] = agrid->u[ii][j][n];
 	}
+#ifdef MHD
 	bval->bxiib1[i][j] = agrid->bx[ii][j];
 	bval->byiib1[i][j] = agrid->by[ii][j];
+#endif /* MHD */
 	bval->uiib1[i][j][1] = agrid->u[ii][j][1]*reflect_s;
       }
     }
@@ -163,8 +175,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uoib1[i][j][n] = agrid->boundary_values.uoib1[i][j][n];
 	}
+#ifdef MHD
 	bval->bxoib1[i][j] = agrid->boundary_values.bxoib1[i][j];
 	bval->byoib1[i][j] = agrid->boundary_values.byoib1[i][j];
+#endif /* MHD */
       }
     }
 
@@ -189,8 +203,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uoib1[i][j][n] = agrid->u[ii][j][n];
 	}
+#ifdef MHD
 	bval->bxoib1[i][j] = agrid->bx[ii+1][j];
 	bval->byoib1[i][j] = agrid->by[ii][j];
+#endif /* MHD */
 	bval->uoib1[i][j][1] = agrid->u[ii][j][1]*reflect_s;
       }
     }
@@ -209,8 +225,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uiib2[i][j][n] = agrid->boundary_values.uiib2[i][j][n];
 	}
+#ifdef MHD
 	bval->bxiib2[i][j] = agrid->boundary_values.bxiib2[i][j];
 	bval->byiib2[i][j] = agrid->boundary_values.byiib2[i][j];
+#endif /* MHD */
       }
     }
 
@@ -234,8 +252,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uiib2[i][j][n] = agrid->u[i][jj][n];
 	}
+#ifdef MHD
 	bval->bxiib2[i][j] = agrid->bx[i][jj];
 	bval->byiib2[i][j] = agrid->by[i][jj];
+#endif /* MHD */
 	bval->uiib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
       }
     }
@@ -253,8 +273,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uoib2[i][j][n] = agrid->boundary_values.uoib2[i][j][n];
 	}
+#ifdef MHD
 	bval->bxoib2[i][j] = agrid->boundary_values.bxoib2[i][j];
 	bval->byoib2[i][j] = agrid->boundary_values.byoib2[i][j];
+#endif /* MHD */
       }
     }
 
@@ -279,8 +301,10 @@ void set_bval_arrays(struct grid_block *agrid, struct bval_array *bval){
 	for (n=0; n<NVAR; n++) {
 	  bval->uoib2[i][j][n] = agrid->u[i][jj][n];
 	}
+#ifdef MHD
 	bval->bxoib2[i][j] = agrid->bx[i][jj];
 	bval->byoib2[i][j] = agrid->by[i][jj+1];
+#endif /* MHD */
 	bval->uoib2[i][j][1] = agrid->u[i][jj][1]*reflect_s;
       }
     }

@@ -21,8 +21,10 @@ void set_ghost_zones(struct grid_block *agrid, struct bval_array *bval)
       agrid->u[i][n] = bval->uiib[i][n];
       agrid->u[ie+(i+1)][n] = bval->uoib[i][n];
     }
+#ifdef MHD
     agrid->bx[i] = bval->bxiib[i];
     agrid->bx[ie+(i+1)] = bval->bxoib[i];
+#endif /* MHD */
   }
 }
 
@@ -43,11 +45,13 @@ void set_ghost_zones(struct grid_block *agrid, struct bval_array *bval){
 	agrid->u[i][j][n] = bval->uiib1[i][j][n];
 	agrid->u[ie1+(i+1)][j][n] = bval->uoib1[i][j][n];
       }
+#ifdef MHD
       agrid->bx[i][j] = bval->bxiib1[i][j];
       agrid->bx[ie1+(i+1)][j] = bval->bxoib1[i][j];
 
       agrid->by[i][j] = bval->byiib1[i][j];
       agrid->by[ie1+(i+1)][j] = bval->byoib1[i][j];
+#endif /* MHD */
     }
   }
 
@@ -59,11 +63,13 @@ void set_ghost_zones(struct grid_block *agrid, struct bval_array *bval){
 	agrid->u[i][j][n] = bval->uiib2[i][j][n];
 	agrid->u[i][ie2+(j+1)][n] = bval->uoib2[i][j][n];
       }
+#ifdef MHD
       agrid->bx[i][j] = bval->bxiib2[i][j];
       agrid->bx[i][ie2+(j+1)] = bval->bxoib2[i][j];
 
       agrid->by[i][j] = bval->byiib2[i][j];
       agrid->by[i][ie2+(j+1)] = bval->byoib2[i][j];
+#endif /* MHD */
     }
   }
 }
