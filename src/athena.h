@@ -13,10 +13,33 @@ typedef struct bval_array{
 #endif /* MHD */
 
 #elif defined TWO_D
-#error: 2D bval_array is not yet defined
+  Real uiib1[4][NX2][NVAR], uoib1[4][NX2][NVAR];
+  Real uiib2[NX1][4][NVAR], uoib2[NX1][4][NVAR];
+#ifdef MHD
+  Real bxiib1[4][NX2], bxoib1[4][NX2];
+  Real byiib1[4][NX2], byoib1[4][NX2];
+
+  Real bxiib2[NX1][4], bxoib2[NX1][4];
+  Real byiib2[NX1][4], byoib2[NX1][4];
+#endif /* MHD */
 
 #else /* THREE_D */
-#error: 3D bval_array is not yet defined
+  Real uiib1[4][NX2][NX3][NVAR], uoib1[4][NX2][NX3][NVAR];
+  Real uiib2[NX1][4][NX3][NVAR], uoib2[NX1][4][NX3][NVAR];
+  Real uiib3[NX1][NX2][4][NVAR], uoib3[NX1][NX2][4][NVAR];
+#ifdef MHD
+  Real bxiib1[4][NX2][NX3], bxoib1[4][NX2][NX3];
+  Real byiib1[4][NX2][NX3], byoib1[4][NX2][NX3];
+  Real bziib1[4][NX2][NX3], bzoib1[4][NX2][NX3];
+
+  Real bxiib2[NX1][4][NX3], bxoib2[NX1][4][NX3];
+  Real byiib2[NX1][4][NX3], byoib2[NX1][4][NX3];
+  Real bziib2[NX1][4][NX3], bzoib2[NX1][4][NX3];
+
+  Real bxiib3[NX1][NX2][4], bxoib3[NX1][NX2][4];
+  Real byiib3[NX1][NX2][4], byoib3[NX1][NX2][4];
+  Real bziib3[NX1][NX2][4], bzoib3[NX1][NX2][4];
+#endif /* MHD */
 
 #endif
 }Bval_Array;
