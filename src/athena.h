@@ -40,7 +40,6 @@ typedef struct bval_array{
   Real byiib3[NX1][NX2][4], byoib3[NX1][NX2][4];
   Real bziib3[NX1][NX2][4], bzoib3[NX1][NX2][4];
 #endif /* MHD */
-
 #endif
 }Bval_Array;
 
@@ -53,6 +52,8 @@ typedef struct grid_block{
 #ifdef MHD
   Real bx[NX1];
 #endif /* MHD */
+  int is,ie;
+  int niib,noib;
 
 #elif defined TWO_D
   Real dx,dy;
@@ -60,6 +61,8 @@ typedef struct grid_block{
 #ifdef MHD
   Real bx[NX1][NX2],by[NX1][NX2];
 #endif /* MHD */
+  int is1,ie1,is2,ie2;
+  int niib1,noib1,niib2,noib2;
 
 #else /* THREE_D */
   Real dx,dy,dz;
@@ -67,12 +70,13 @@ typedef struct grid_block{
 #ifdef MHD
   Real bx[NX1][NX2][NX3],by[NX1][NX2][NX3],bz[NX1][NX2][NX3];
 #endif /* MHD */
+  int is1,ie1,is2,ie2,is3,ie3;
+  int niib1,noib1,niib2,noib2,niib3,noib3;
+
 #endif
   Real dt,time;
   Real t_bin,dt_bin,t_hst,dt_hst,t_hdf,dt_hdf;
   struct bval_array boundary_values;
-  int is,ie;
-  int niib,noib;
   int ncycles;
   char bin_file[9],hst_file[9],hdf_file[9];
 }Grid_Block;
