@@ -39,6 +39,9 @@ LIB = -lm
 .c.o:
 	${CC} ${CFLAGS} -c $<
 #---------------------  targets  ---------------------------------------
+compile: ${OBJ}
+	${LDR} -o ${EXEDIR}athena ${OBJ} ${LIB}
+#-----------------------------------------------------------------------
 help:
 	@echo This is ATHENA with DIM=$(DIM)
 	@echo Type 'make compile' to generate ATHENA executable
@@ -53,9 +56,6 @@ clean:
 distclean:
 	rm -f *.o *~ Makedepend
 	touch Makedepend
-#-----------------------------------------------------------------------
-compile: ${OBJ}
-	${LDR} -o ${EXEDIR}athena ${OBJ} ${LIB}
 #-----------------------------------------------------------------------
 depend:
 	rm -f Makedepend
