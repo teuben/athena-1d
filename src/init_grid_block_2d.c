@@ -25,10 +25,16 @@ void init_grid_block(FILE *p_input_file,FILE *p_output_file,Grid_Block *agrid){
 /*============================================================================*/
   int i,j,nxzones,nyzones;
   Real xmin,xmax,ymin,ymax;
-  Real diib1,sxiib1,syiib1,sziib1,eiib1,bxiib1,byiib1,bziib1;
-  Real doib1,sxoib1,syoib1,szoib1,eoib1,bxoib1,byoib1,bzoib1;
-  Real diib2,sxiib2,syiib2,sziib2,eiib2,bxiib2,byiib2,bziib2;
-  Real doib2,sxoib2,syoib2,szoib2,eoib2,bxoib2,byoib2,bzoib2;
+  Real diib1,sxiib1,syiib1,sziib1,eiib1;
+  Real doib1,sxoib1,syoib1,szoib1,eoib1;
+  Real diib2,sxiib2,syiib2,sziib2,eiib2;
+  Real doib2,sxoib2,syoib2,szoib2,eoib2;
+#ifdef MHD
+  Real bxiib1,byiib1,bziib1;
+  Real bxoib1,byoib1,bzoib1;
+  Real bxiib2,byiib2,bziib2;
+  Real bxoib2,byoib2,bzoib2;
+#endif /* MHD */
   char buf[120];
 /*============================================================================*/
 /* Initialize grid */
