@@ -9,7 +9,9 @@
 #include "prototypes.h"
 
 /*********************/
+#if defined ONE_D && defined MHD
 void linear_wave_error(struct grid_block *agrid);
+#endif
 /*********************/
 
 int main(int argc, char *argv[])
@@ -143,7 +145,9 @@ int main(int argc, char *argv[])
   }
 
 /*********************/
+#if defined ONE_D && defined MHD
   linear_wave_error(&grid_level0);
+#endif
 /*********************/
 
 /* Finish up */
