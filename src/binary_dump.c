@@ -95,8 +95,15 @@ static void write_dx_header(const struct grid_block *agrid){
   for(n=0;n<NUM_ARRAY;n++){
     offset += nzones*sizeof(float);
     fprintf(pfile,"# %s\n",array_name[n]);
+#ifdef MHD
+    /* The last item is the x-interface field for which there is 1
+       extra element */
     fprintf(pfile,"object %d class array type float rank 0 items %d\n",
 	    n+3,(n == (NUM_ARRAY - 1) ? nzones + 1 : nzones));
+#else
+    fprintf(pfile,"object %d class array type float rank 0 items %d\n",
+	    n+3,nzones);
+#endif
     fprintf(pfile,"data file \"%s\",%d\n",agrid->bin_file,offset);
     fprintf(pfile,"attribute \"dep\" string \"positions\"\n\n");
   }
