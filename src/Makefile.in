@@ -1,5 +1,5 @@
 #=======================================================================
-#  FIRST-CUT MAKEFILE FOR ATHENA CODE
+#  generic Makefile(.in)
 #
 #-------------------  object files  ------------------------------------
 OBJ =   add1_2name.o   \
@@ -24,15 +24,17 @@ OBJ =   add1_2name.o   \
 	linear_wave.o
 #-------------------  macro definitions  -------------------------------
 EXEDIR = ../bin/
-# macros for sun or SGI
-CC  = gcc
-OPTS = -O3 -Wall -W -ansi -pedantic
-LDR = gcc -O3
+#
+CC  = @CC@
+OPT = -O3
+GNUFLAGS = -Wall -W -ansi -pedantic
+CFLAGS = $(OPT) $(GNUFLAGS)
+LDR = @CC@
 LIB = -lm
 
 #--------------------  implicit rules  ---------------------------------
 .c.o:
-	${CC} ${OPTS} -c $<
+	${CC} ${CFLAGS} -c $<
 #---------------------  targets  ---------------------------------------
 help:
 	@echo Type 'make compile' to generate ATHENA executable
