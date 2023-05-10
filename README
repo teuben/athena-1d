@@ -1,8 +1,2 @@
-this is our CVS toy box for athena. The athena-1d will disappear,
-and be merged into a full athena module under CVS with all the
-fancy autoconf and configuration support.
-
-Peter Teuben ---   august 2002
-
-
-october-2002:		autoconf support added
+this is the 1D version of athena. The "CVS" tag 
+denotes when we were last in CVS: Nov 2002.
